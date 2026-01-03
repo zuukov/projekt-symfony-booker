@@ -7,9 +7,7 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Add aboutMe, experience, and school fields to Staff entity
- */
+
 final class Version20260103134500 extends AbstractMigration
 {
     public function getDescription(): string
