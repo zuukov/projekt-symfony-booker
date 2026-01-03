@@ -1,0 +1,157 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+<div class="flex justify-center items-center min-h-screen bg-gray-100 py-8">
+    <div class="bg-white shadow-lg rounded-lg p-8 max-w-2xl w-full">
+        <h1 class="text-2xl font-bold text-center mb-6">Rejestracja</h1>
+
+        {{ form_start(registrationForm, {'attr': {'class': 'space-y-6'}}) }}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                {{ form_label(registrationForm.email, 'E-mail', {'class': 'block text-sm font-medium text-gray-700'}) }}
+                {{ form_widget(registrationForm.email, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'}}) }}
+                {{ form_errors(registrationForm.email) }}
+            </div>
+            <div>
+                {{ form_label(registrationForm.phone, 'Nr. Telefonu', {'class': 'block text-sm font-medium text-gray-700'}) }}
+                {{ form_widget(registrationForm.phone, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'}}) }}
+                {{ form_errors(registrationForm.phone) }}
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                {{ form_label(registrationForm.name, 'Imię', {'class': 'block text-sm font-medium text-gray-700'}) }}
+                {{ form_widget(registrationForm.name, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'}}) }}
+                {{ form_errors(registrationForm.name) }}
+            </div>
+            <div>
+                {{ form_label(registrationForm.surname, 'Nazwisko', {'class': 'block text-sm font-medium text-gray-700'}) }}
+                {{ form_widget(registrationForm.surname, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'}}) }}
+                {{ form_errors(registrationForm.surname) }}
+            </div>
+        </div>
+
+        <div>
+            {{ form_label(registrationForm.password.first, 'Hasło', {'class': 'block text-sm font-medium text-gray-700'}) }}
+            {{ form_widget(registrationForm.password.first, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'}}) }}
+            {{ form_errors(registrationForm.password.first) }}
+        </div>
+        <div>
+            {{ form_label(registrationForm.password.second, 'Potwierdź hasło', {'class': 'block text-sm font-medium text-gray-700'}) }}
+            {{ form_widget(registrationForm.password.second, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'}}) }}
+            {{ form_errors(registrationForm.password.second) }}
+        </div>
+
+        <div>
+            {{ form_label(registrationForm.accountType, 'Typ konta', {'class': 'block text-sm font-medium text-gray-700 mb-4'}) }}
+            <div class="flex space-x-[100px]">
+                {% for choice in registrationForm.accountType %}
+                    <div class="flex items-center">
+                        {{ form_widget(choice, {'attr': {'class': 'h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300'}}) }}
+                        {{ form_label(choice, null, {'class': 'ml-3 block text-sm font-medium text-gray-700'}) }}
+                    </div>
+                {% endfor %}
+            </div>
+            {{ form_errors(registrationForm.accountType) }}
+        </div>
+
+        <div id="businessFields" style="display: none;" class="space-y-4">
+            <h3 class="text-lg font-medium text-gray-900">Informacje Firmy</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    {{ form_label(registrationForm.businessName, 'Nazwa Firmy', {'class': 'block text-sm font-medium text-gray-700'}) }}
+                    {{ form_widget(registrationForm.businessName, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'}}) }}
+                    {{ form_errors(registrationForm.businessName) }}
+                </div>
+                <div>
+                    {{ form_label(registrationForm.formalBusinessName, 'Formalna nazwa firmy', {'class': 'block text-sm font-medium text-gray-700'}) }}
+                    {{ form_widget(registrationForm.formalBusinessName, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'}}) }}
+                    {{ form_errors(registrationForm.formalBusinessName) }}
+                </div>
+            </div>
+            <div>
+                {{ form_label(registrationForm.address, 'Adres', {'class': 'block text-sm font-medium text-gray-700'}) }}
+                {{ form_widget(registrationForm.address, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'}}) }}
+                {{ form_errors(registrationForm.address) }}
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    {{ form_label(registrationForm.city, 'Miasto', {'class': 'block text-sm font-medium text-gray-700'}) }}
+                    {{ form_widget(registrationForm.city, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'}}) }}
+                    {{ form_errors(registrationForm.city) }}
+                </div>
+                <div>
+                    {{ form_label(registrationForm.postalCode, 'Kod pocztowy', {'class': 'block text-sm font-medium text-gray-700'}) }}
+                    {{ form_widget(registrationForm.postalCode, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'}}) }}
+                    {{ form_errors(registrationForm.postalCode) }}
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    {{ form_label(registrationForm.businessPhone, 'Nr. Telefonu', {'class': 'block text-sm font-medium text-gray-700'}) }}
+                    {{ form_widget(registrationForm.businessPhone, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'}}) }}
+                    {{ form_errors(registrationForm.businessPhone) }}
+                </div>
+                <div>
+                    {{ form_label(registrationForm.businessEmail, 'E-mail firmy', {'class': 'block text-sm font-medium text-gray-700'}) }}
+                    {{ form_widget(registrationForm.businessEmail, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'}}) }}
+                    {{ form_errors(registrationForm.businessEmail) }}
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <button class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" type="submit">
+                Zarejestruj
+            </button>
+        </div>
+
+        {{ form_end(registrationForm) }}
+
+        <div class="text-center mt-4">
+            <a href="{{ path('app_login') }}" class="text-indigo-600 hover:text-indigo-500">Posiadasz konto? Zaloguj się.</a>
+        </div>
+    </div>
+</div>
+
+<script>
+console.log('Script loaded');
+try {
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOMContentLoaded fired');
+        const accountTypeRadios = document.querySelectorAll('input[name="registration_form[accountType]"]');
+        console.log('Found radios:', accountTypeRadios.length);
+        const businessFields = document.getElementById('businessFields');
+        console.log('Business fields element:', businessFields);
+
+        function toggleBusinessFields() {
+            const selectedValue = document.querySelector('input[name="registration_form[accountType]"]:checked')?.value;
+            console.log('Selected value:', selectedValue);
+            if (selectedValue === 'business_owner') {
+                businessFields.style.display = 'block';
+                console.log('Showing business fields');
+            } else {
+                businessFields.style.display = 'none';
+                console.log('Hiding business fields');
+            }
+        }
+
+        accountTypeRadios.forEach(radio => {
+            console.log('Radio name:', radio.name, 'value:', radio.value);
+            radio.addEventListener('change', toggleBusinessFields);
+            console.log('Added event listener to radio:', radio.value);
+        });
+
+        // Initial check
+        toggleBusinessFields();
+    });
+} catch (error) {
+    console.error('Error in script:', error);
+    alert('Error in script: ' + error);
+}
+</script>
+{% endblock %}

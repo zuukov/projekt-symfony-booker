@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User Dashboard{% endblock %}
+
+{% block body %}
+<div class="flex justify-center items-center min-h-screen bg-gray-100">
+    <div class="bg-white shadow-lg rounded-lg p-8 max-w-2xl w-full text-center">
+        <h1 class="text-3xl font-bold text-gray-900 mb-6">User Dashboard</h1>
+        <p class="text-xl text-gray-700">Witaj {{ user.name }}!</p>
+        <div class="mt-6">
+            <a href="{{ path('app_logout') }}" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700">
+                Wyloguj się
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

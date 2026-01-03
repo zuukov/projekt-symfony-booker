@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/owner')]
-#[IsGranted('ROLE_USER')] // Basic auth check, we'll add role check in methods
+#[IsGranted('ROLE_BUSINESS_OWNER')]
 class OwnerController extends AbstractController
 {
     public function __construct(
@@ -30,6 +30,8 @@ class OwnerController extends AbstractController
     public function dashboard(): Response
     {
         $user = $this->getUser();
+
+        error_log('Owner dashboard called for user: ' . $user->getEmail() . ' roles: ' . implode(', ', $user->getRoles()));
 
         // Check if user is business owner
         if ($user->getRole() !== UserRole::BUSINESS_OWNER) {
