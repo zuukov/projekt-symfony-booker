@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Staff Management - {{ business.businessName }}{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ path('owner_dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">{{ business.businessName }}</li>
+                </ol>
+            </nav>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Staff Management - {{ business.businessName }}</h1>
+                <div>
+                    <a href="{{ path('owner_business_edit', {id: business.id}) }}" class="btn btn-outline-secondary me-2">Edit Business</a>
+                    <a href="{{ path('owner_staff_create', {id: business.id}) }}" class="btn btn-primary">Add Staff Member</a>
+                </div>
+            </div>
+
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+
+            {% if staff is empty %}
+                <div class="alert alert-info">
+                    No staff members added yet.
+                    <a href="{{ path('owner_staff_create', {id: business.id}) }}" class="alert-link">Add your first staff member</a>.
+                </div>
+            {% else %}
+                <div class="row">
+                    {% for staffMember in staff %}
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    {% if staffMember.avatarImage %}
+                                        <img src="{{ staffMember.avatarImage }}" class="card-img-top rounded-circle mx-auto d-block" alt="Avatar" style="width: 80px; height: 80px; object-fit: cover;">
+                                    {% else %}
+                                        <div class="bg-light rounded-circle mx-auto d-block" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-user fa-2x text-muted"></i>
+                                        </div>
+                                    {% endif %}
+                                    <h5 class="card-title text-center mt-2">{{ staffMember.name }} {{ staffMember.surname }}</h5>
+                                    {% if staffMember.aboutMe %}
+                                        <p class="card-text">{{ staffMember.aboutMe|slice(0, 100) }}{% if staffMember.aboutMe|length > 100 %}...{% endif %}</p>
+                                    {% endif %}
+                                    {% if staffMember.school %}
+                                        <p class="card-text">
+                                            <small class="text-muted">Education: {{ staffMember.school }}</small>
+                                        </p>
+                                    {% endif %}
+                                </div>
+                                <div class="card-footer">
+                                    <a href="{{ path('owner_staff_edit', {businessId: business.id, staffId: staffMember.id}) }}" class="btn btn-outline-primary btn-sm">Edit</a>
+                                    <form method="post" action="{{ path('owner_staff_delete', {businessId: business.id, staffId: staffMember.id}) }}" class="d-inline"
+                                          onsubmit="return confirm('Are you sure you want to delete this staff member?')">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ staffMember.id) }}">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ is_edit ? 'Edit Staff Member' : 'Add Staff Member' }} - {{ business.businessName }}{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ path('owner_dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ path('owner_business_staff', {id: business.id}) }}">{{ business.businessName }}</a></li>
+                    <li class="breadcrumb-item active">{{ is_edit ? 'Edit Staff' : 'Add Staff' }}</li>
+                </ol>
+            </nav>
+
+            <div class="card">
+                <div class="card-header">
+                    <h1>{{ is_edit ? 'Edit Staff Member' : 'Add New Staff Member' }}</h1>
+                    <p class="mb-0 text-muted">For {{ business.businessName }}</p>
+                </div>
+                <div class="card-body">
+                    {% for message in app.flashes('success') %}
+                        <div class="alert alert-success">{{ message }}</div>
+                    {% endfor %}
+
+                    {{ form_start(form) }}
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form_row(form.name) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(form.surname) }}
+                            </div>
+                        </div>
+
+                        {{ form_row(form.aboutMe) }}
+
+                        {{ form_row(form.experience) }}
+
+                        {{ form_row(form.school) }}
+
+                        {{ form_row(form.avatarImage) }}
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ path('owner_business_staff', {id: business.id}) }}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">
+                                {{ is_edit ? 'Update Staff Member' : 'Add Staff Member' }}
+                            </button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

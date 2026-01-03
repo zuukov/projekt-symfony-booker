@@ -28,6 +28,15 @@ class Staff
     #[ORM\Column(length: 500, nullable: true)]
     private ?string $avatarImage = null;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $aboutMe = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $experience = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $school = null;
+
     #[ORM\OneToMany(mappedBy: 'staff', targetEntity: StaffService::class)]
     private Collection $staffServices;
 
@@ -97,6 +106,42 @@ class Staff
     public function setAvatarImage(?string $avatarImage): static
     {
         $this->avatarImage = $avatarImage;
+
+        return $this;
+    }
+
+    public function getAboutMe(): ?string
+    {
+        return $this->aboutMe;
+    }
+
+    public function setAboutMe(?string $aboutMe): static
+    {
+        $this->aboutMe = $aboutMe;
+
+        return $this;
+    }
+
+    public function getExperience(): ?string
+    {
+        return $this->experience;
+    }
+
+    public function setExperience(?string $experience): static
+    {
+        $this->experience = $experience;
+
+        return $this;
+    }
+
+    public function getSchool(): ?string
+    {
+        return $this->school;
+    }
+
+    public function setSchool(?string $school): static
+    {
+        $this->school = $school;
 
         return $this;
     }

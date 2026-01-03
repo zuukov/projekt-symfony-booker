@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Owner Dashboard{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Business Owner Dashboard</h1>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Your Businesses</h2>
+                <a href="{{ path('owner_business_create') }}" class="btn btn-primary">Create New Business</a>
+            </div>
+
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+
+            {% if businesses is empty %}
+                <div class="alert alert-info">
+                    You don't have any businesses yet.
+                    <a href="{{ path('owner_business_create') }}" class="alert-link">Create your first business</a>.
+                </div>
+            {% else %}
+                <div class="row">
+                    {% for business in businesses %}
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ business.businessName }}</h5>
+                                    <p class="card-text">{{ business.description ?: 'No description' }}</p>
+                                    <p class="card-text">
+                                        <small class="text-muted">
+                                            {{ business.city }}, {{ business.address }}
+                                        </small>
+                                    </p>
+                                </div>
+                                <div class="card-footer">
+                                    <a href="{{ path('owner_business_staff', {id: business.id}) }}" class="btn btn-outline-primary btn-sm">Manage Staff</a>
+                                    <a href="{{ path('owner_business_edit', {id: business.id}) }}" class="btn btn-outline-secondary btn-sm">Edit Business</a>
+                                    <form method="post" action="{{ path('owner_business_delete', {id: business.id}) }}" class="d-inline"
+                                          onsubmit="return confirm('Are you sure you want to delete this business?')">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ business.id) }}">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
