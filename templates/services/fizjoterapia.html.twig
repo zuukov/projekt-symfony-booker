@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block body %}
+    <main style="padding: 4rem 2rem; text-align: center;">
+        <h1 style="font-size: 3rem; font-weight: 600;">
+            {{ title }}
+        </h1>
+
+        <p style="margin-top: 1rem; color: #57606f;">
+            Landing page dla usługi: <strong>{{ slug }}</strong>
+        </p>
+    </main>
+{% endblock %}
