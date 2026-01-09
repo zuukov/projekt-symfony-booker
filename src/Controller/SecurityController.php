@@ -42,6 +42,7 @@ class SecurityController extends AbstractController
     {
         $form = $this->createForm(RegistrationFormType::class);
         $form->handleRequest($request);
+        $typ_konta = (string) $request->query->get('typ_konta', '');
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
@@ -101,6 +102,7 @@ class SecurityController extends AbstractController
 
         return $this->render('security/register.html.twig', [
             'registrationForm' => $form->createView(),
+            'typ_konta' => $typ_konta,
         ]);
     }
 
