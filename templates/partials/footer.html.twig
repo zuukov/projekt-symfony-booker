@@ -1,0 +1,29 @@
+<footer class="footer bg-[color:var(--c-primary)] text-white">
+	<div class="home__container py-10">
+		<div class="footer__top flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+			<nav class="footer__nav flex flex-wrap justify-center w-full gap-x-10 gap-y-3 text-white/90">
+				<a class="footer__link" href="#">O nas</a>
+				<a class="footer__link" href="#">Dla biznesu</a>
+				<a class="footer__link" href="#">FAQ</a>
+				<a class="footer__link" href="#">Regulamin</a>
+				<a class="footer__link" href="#">Polityka prywatności</a>
+				<a class="footer__link" href="#">Kontakt</a>
+			</nav>
+		</div>
+
+		<div class="footer__divider my-8"></div>
+
+		<div class="footer__bottom flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+			<div class="footer__brand flex items-center gap-3 text-white/90">
+				<img src="{{ asset('images/logo-white.png') }}" alt="Booker" class="h-7 w-auto">
+				<span class="text-sm footer-copyright">© {{ "now"|date("Y") }} Booker</span>
+			</div>
+
+			<div class="footer__social flex items-center gap-2">
+				<a class="footer__social-btn" href="#"><i class="fa-brands fa-instagram"></i></a>
+				<a class="footer__social-btn" href="#"><i class="fa-brands fa-facebook-f"></i></a>
+				<a class="footer__social-btn" href="#"><i class="fa-brands fa-youtube"></i></a>
+			</div>
+		</div>
+	</div>
+</footer>
