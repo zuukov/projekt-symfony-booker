@@ -715,33 +715,45 @@ class OwnerController extends AbstractController
             throw $this->createAccessDeniedException('Access denied.');
         }
 
-        $bookings = $this->bookingRepository->findBy(['business' => $business]);
+        try {
+            $bookings = $this->bookingRepository->findByBusiness($business);
 
-        $events = [];
-        foreach ($bookings as $booking) {
-            $color = match($booking->getStatus()->value) {
-                'pending' => '#fbbf24',
-                'confirmed' => '#10b981',
-                'completed' => '#3b82f6',
-                'cancelled' => '#ef4444',
-                default => '#6b7280'
-            };
+            $events = [];
+            foreach ($bookings as $booking) {
+                // Skip bookings with missing required data
+                if (!$booking->getStatus() || !$booking->getService() || !$booking->getStaff() || !$booking->getUser()) {
+                    continue;
+                }
 
-            $events[] = [
-                'id' => $booking->getId(),
-                'title' => $booking->getService()->getName() . ' - ' . $booking->getStaff()->getName(),
-                'start' => $booking->getStartsAt()->format('Y-m-d\TH:i:s'),
-                'end' => $booking->getEndsAt()->format('Y-m-d\TH:i:s'),
-                'backgroundColor' => $color,
-                'borderColor' => $color,
-                'extendedProps' => [
-                    'customerName' => $booking->getUser()->getFirstName() . ' ' . $booking->getUser()->getLastName(),
-                    'status' => $booking->getStatus()->value,
-                    'price' => $booking->getPriceAtBooking(),
-                ]
-            ];
+                $color = match($booking->getStatus()->value) {
+                    'pending' => '#fbbf24',
+                    'confirmed' => '#10b981',
+                    'completed' => '#3b82f6',
+                    'cancelled' => '#ef4444',
+                    default => '#6b7280'
+                };
+
+                $events[] = [
+                    'id' => $booking->getId(),
+                    'title' => $booking->getService()->getName() . ' - ' . $booking->getStaff()->getName(),
+                    'start' => $booking->getStartsAt()->format('Y-m-d\TH:i:s'),
+                    'end' => $booking->getEndsAt()->format('Y-m-d\TH:i:s'),
+                    'backgroundColor' => $color,
+                    'borderColor' => $color,
+                    'extendedProps' => [
+                        'customerName' => $booking->getUser()->getName() . ' ' . $booking->getUser()->getSurname(),
+                        'status' => $booking->getStatus()->value,
+                        'price' => $booking->getPriceAtBooking(),
+                    ]
+                ];
+            }
+
+            return new JsonResponse($events);
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'error' => 'Failed to load calendar data',
+                'message' => $e->getMessage()
+            ], 500);
         }
-
-        return new JsonResponse($events);
     }
 }

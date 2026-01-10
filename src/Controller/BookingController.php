@@ -232,35 +232,47 @@ class BookingController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function userCalendarData(): JsonResponse
     {
-        $user = $this->getUser();
-        $bookings = $this->bookingRepository->findBy(['user' => $user]);
+        try {
+            $user = $this->getUser();
+            $bookings = $this->bookingRepository->findByUser($user);
 
-        $events = [];
-        foreach ($bookings as $booking) {
-            $color = match($booking->getStatus()->value) {
-                'pending' => '#fbbf24',
-                'confirmed' => '#10b981',
-                'completed' => '#3b82f6',
-                'cancelled' => '#ef4444',
-                default => '#6b7280'
-            };
+            $events = [];
+            foreach ($bookings as $booking) {
+                // Skip bookings with missing required data
+                if (!$booking->getStatus() || !$booking->getService() || !$booking->getStaff() || !$booking->getBusiness()) {
+                    continue;
+                }
 
-            $events[] = [
-                'id' => $booking->getId(),
-                'title' => $booking->getService()->getName() . ' - ' . $booking->getBusiness()->getBusinessName(),
-                'start' => $booking->getStartsAt()->format('Y-m-d\TH:i:s'),
-                'end' => $booking->getEndsAt()->format('Y-m-d\TH:i:s'),
-                'backgroundColor' => $color,
-                'borderColor' => $color,
-                'extendedProps' => [
-                    'staffName' => $booking->getStaff()->getName() . ' ' . $booking->getStaff()->getSurname(),
-                    'status' => $booking->getStatus()->value,
-                    'price' => $booking->getPriceAtBooking(),
-                    'businessPhone' => $booking->getBusiness()->getPhone(),
-                ]
-            ];
+                $color = match($booking->getStatus()->value) {
+                    'pending' => '#fbbf24',
+                    'confirmed' => '#10b981',
+                    'completed' => '#3b82f6',
+                    'cancelled' => '#ef4444',
+                    default => '#6b7280'
+                };
+
+                $events[] = [
+                    'id' => $booking->getId(),
+                    'title' => $booking->getService()->getName() . ' - ' . $booking->getBusiness()->getBusinessName(),
+                    'start' => $booking->getStartsAt()->format('Y-m-d\TH:i:s'),
+                    'end' => $booking->getEndsAt()->format('Y-m-d\TH:i:s'),
+                    'backgroundColor' => $color,
+                    'borderColor' => $color,
+                    'extendedProps' => [
+                        'staffName' => $booking->getStaff()->getName() . ' ' . $booking->getStaff()->getSurname(),
+                        'status' => $booking->getStatus()->value,
+                        'price' => $booking->getPriceAtBooking(),
+                        'businessPhone' => $booking->getBusiness()->getPhone(),
+                    ]
+                ];
+            }
+
+            return new JsonResponse($events);
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'error' => 'Failed to load calendar data',
+                'message' => $e->getMessage()
+            ], 500);
         }
-
-        return new JsonResponse($events);
     }
 }
