@@ -51,7 +51,7 @@ class ServiceFormType extends AbstractType
             ->add('category', EntityType::class, [
                 'label' => 'Kategoria',
                 'class' => ServiceCategory::class,
-                'choice_label' => 'categoryFriendlyName',
+                'choice_label' => 'categoryFullName',
                 'placeholder' => 'Wybierz kategorię',
                 'constraints' => [
                     new Assert\NotBlank(message: 'Kategoria jest wymagana'),

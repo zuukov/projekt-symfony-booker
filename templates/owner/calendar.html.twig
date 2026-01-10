@@ -2,6 +2,10 @@
 
 {% block title %}Kalendarz - {{ business.businessName }}{% endblock %}
 
+{% block header %}
+	{% include 'partials/nav-simple.html.twig' %}
+{% endblock %}
+
 {% block body %}
 <div class="max-w-7xl mx-auto px-4 mt-8">
     <div class="w-full">
@@ -53,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const calendar = new FullCalendar.Calendar(calendarEl, {
         locale: 'pl',
+        firstDay: 1,
         initialView: 'dayGridMonth',
         headerToolbar: {
             left: 'prev,next today',
@@ -65,7 +70,29 @@ document.addEventListener('DOMContentLoaded', function() {
             week: 'Tydzień',
             day: 'Dzień'
         },
-        events: '{{ path('owner_calendar_data', {id: business.id}) }}',
+        events: function(info, successCallback, failureCallback) {
+            console.log('Fetching events from:', '{{ path('owner_calendar_data', {id: business.id}) }}');
+            fetch('{{ path('owner_calendar_data', {id: business.id}) }}')
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Events data received:', data);
+                    console.log('Number of events:', data.length);
+                    successCallback(data);
+                })
+                .catch(error => {
+                    console.error('Error loading calendar events:', error);
+                    failureCallback(error);
+                });
+        },
+        loading: function(isLoading) {
+            console.log('Calendar loading:', isLoading);
+        },
+        eventDidMount: function(info) {
+            console.log('Event mounted:', info.event.title);
+        },
         eventClick: function(info) {
             const event = info.event;
             const props = event.extendedProps;

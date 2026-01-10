@@ -201,9 +201,16 @@ class OwnerController extends AbstractController
     }
 
     #[Route('/business/{businessId}/staff/{staffId}/edit', name: 'owner_staff_edit')]
-    public function editStaff(Request $request, int $businessId, Staff $staff): Response
+    public function editStaff(Request $request, int $businessId, int $staffId): Response
     {
         $user = $this->getUser();
+
+        $staff = $this->staffRepository->find($staffId);
+
+        if (!$staff) {
+            throw $this->createNotFoundException('Staff member not found.');
+        }
+
         $business = $staff->getBusiness();
 
         if ($user->getRole() !== UserRole::BUSINESS_OWNER ||
@@ -219,7 +226,7 @@ class OwnerController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'Staff member updated successfully.');
+            $this->addFlash('success', 'Dane pracownika zostały zaktualizowane.');
 
             return $this->redirectToRoute('owner_business_staff', ['id' => $business->getId()]);
         }
@@ -233,9 +240,16 @@ class OwnerController extends AbstractController
     }
 
     #[Route('/business/{businessId}/staff/{staffId}/delete', name: 'owner_staff_delete', methods: ['POST'])]
-    public function deleteStaff(Request $request, int $businessId, Staff $staff): Response
+    public function deleteStaff(Request $request, int $businessId, int $staffId): Response
     {
         $user = $this->getUser();
+
+        $staff = $this->staffRepository->find($staffId);
+
+        if (!$staff) {
+            throw $this->createNotFoundException('Staff member not found.');
+        }
+
         $business = $staff->getBusiness();
 
         if ($user->getRole() !== UserRole::BUSINESS_OWNER ||
