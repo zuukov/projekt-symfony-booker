@@ -15,4 +15,16 @@ class StaffWorkingHoursRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, StaffWorkingHours::class);
     }
+
+    public function findByStaffAndWeekday($staff, int $weekday): array
+    {
+        return $this->createQueryBuilder('swh')
+            ->andWhere('swh.staff = :staff')
+            ->andWhere('swh.weekday = :weekday')
+            ->setParameter('staff', $staff)
+            ->setParameter('weekday', $weekday)
+            ->orderBy('swh.startsAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

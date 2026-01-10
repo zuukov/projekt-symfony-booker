@@ -20,60 +20,109 @@ class BusinessFormType extends AbstractType
 
         $builder
             ->add('businessName', TextType::class, [
-                'label' => 'Business Name',
+                'label' => 'Nazwa biznesu',
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Length(['max' => 255]),
+                    new Assert\Length(max: 255),
                 ],
                 'disabled' => $isEdit, // Make read-only when editing
+                'attr' => [
+                    'class' => 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500',
+                ],
+                'label_attr' => [
+                    'class' => 'block text-sm font-medium text-gray-700 mb-1',
+                ],
             ])
             ->add('formalBusinessName', TextType::class, [
-                'label' => 'Formal Business Name',
+                'label' => 'Formalna nazwa biznesu',
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Length(['max' => 255]),
+                    new Assert\Length(max: 255),
+                ],
+                'attr' => [
+                    'class' => 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500',
+                ],
+                'label_attr' => [
+                    'class' => 'block text-sm font-medium text-gray-700 mb-1',
                 ],
             ])
             ->add('description', TextareaType::class, [
-                'label' => 'Description',
+                'label' => 'Opis',
                 'required' => false,
                 'constraints' => [
-                    new Assert\Length(['max' => 1000]),
+                    new Assert\Length(max: 1000),
+                ],
+                'attr' => [
+                    'class' => 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500',
+                    'rows' => 4,
+                ],
+                'label_attr' => [
+                    'class' => 'block text-sm font-medium text-gray-700 mb-1',
                 ],
             ])
             ->add('address', TextType::class, [
-                'label' => 'Address',
+                'label' => 'Adres',
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Length(['max' => 500]),
+                    new Assert\Length(max: 500),
+                ],
+                'attr' => [
+                    'class' => 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500',
+                ],
+                'label_attr' => [
+                    'class' => 'block text-sm font-medium text-gray-700 mb-1',
                 ],
             ])
             ->add('city', TextType::class, [
-                'label' => 'City',
+                'label' => 'Miasto',
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Length(['max' => 255]),
+                    new Assert\Length(max: 255),
+                ],
+                'attr' => [
+                    'class' => 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500',
+                ],
+                'label_attr' => [
+                    'class' => 'block text-sm font-medium text-gray-700 mb-1',
                 ],
             ])
             ->add('postalCode', TextType::class, [
-                'label' => 'Postal Code',
+                'label' => 'Kod pocztowy',
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Length(['max' => 20]),
+                    new Assert\Length(max: 20),
+                ],
+                'attr' => [
+                    'class' => 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500',
+                ],
+                'label_attr' => [
+                    'class' => 'block text-sm font-medium text-gray-700 mb-1',
                 ],
             ])
             ->add('phone', TextType::class, [
-                'label' => 'Phone',
+                'label' => 'Telefon',
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Length(['max' => 20]),
+                    new Assert\Length(max: 20),
+                ],
+                'attr' => [
+                    'class' => 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500',
+                ],
+                'label_attr' => [
+                    'class' => 'block text-sm font-medium text-gray-700 mb-1',
                 ],
             ])
             ->add('secondaryPhone', TextType::class, [
-                'label' => 'Secondary Phone',
+                'label' => 'Telefon dodatkowy',
                 'required' => false,
                 'constraints' => [
-                    new Assert\Length(['max' => 20]),
+                    new Assert\Length(max: 20),
+                ],
+                'attr' => [
+                    'class' => 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500',
+                ],
+                'label_attr' => [
+                    'class' => 'block text-sm font-medium text-gray-700 mb-1',
                 ],
             ])
             ->add('email', EmailType::class, [
@@ -81,7 +130,13 @@ class BusinessFormType extends AbstractType
                 'constraints' => [
                     new Assert\NotBlank(),
                     new Assert\Email(),
-                    new Assert\Length(['max' => 255]),
+                    new Assert\Length(max: 255),
+                ],
+                'attr' => [
+                    'class' => 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500',
+                ],
+                'label_attr' => [
+                    'class' => 'block text-sm font-medium text-gray-700 mb-1',
                 ],
             ])
             ->add('instagramUrl', UrlType::class, [
@@ -89,7 +144,13 @@ class BusinessFormType extends AbstractType
                 'required' => false,
                 'constraints' => [
                     new Assert\Url(),
-                    new Assert\Length(['max' => 500]),
+                    new Assert\Length(max: 500),
+                ],
+                'attr' => [
+                    'class' => 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500',
+                ],
+                'label_attr' => [
+                    'class' => 'block text-sm font-medium text-gray-700 mb-1',
                 ],
             ])
             ->add('facebookUrl', UrlType::class, [
@@ -97,15 +158,27 @@ class BusinessFormType extends AbstractType
                 'required' => false,
                 'constraints' => [
                     new Assert\Url(),
-                    new Assert\Length(['max' => 500]),
+                    new Assert\Length(max: 500),
+                ],
+                'attr' => [
+                    'class' => 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500',
+                ],
+                'label_attr' => [
+                    'class' => 'block text-sm font-medium text-gray-700 mb-1',
                 ],
             ])
             ->add('websiteUrl', UrlType::class, [
-                'label' => 'Website URL',
+                'label' => 'Strona internetowa URL',
                 'required' => false,
                 'constraints' => [
                     new Assert\Url(),
-                    new Assert\Length(['max' => 500]),
+                    new Assert\Length(max: 500),
+                ],
+                'attr' => [
+                    'class' => 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500',
+                ],
+                'label_attr' => [
+                    'class' => 'block text-sm font-medium text-gray-700 mb-1',
                 ],
             ])
             ->add('logoUrl', UrlType::class, [
@@ -113,7 +186,28 @@ class BusinessFormType extends AbstractType
                 'required' => false,
                 'constraints' => [
                     new Assert\Url(),
-                    new Assert\Length(['max' => 500]),
+                    new Assert\Length(max: 500),
+                ],
+                'attr' => [
+                    'class' => 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500',
+                ],
+                'label_attr' => [
+                    'class' => 'block text-sm font-medium text-gray-700 mb-1',
+                ],
+            ])
+            ->add('specialNote', TextareaType::class, [
+                'label' => 'Notatka specjalna (święta, dni wolne)',
+                'required' => false,
+                'constraints' => [
+                    new Assert\Length(max: 200),
+                ],
+                'attr' => [
+                    'class' => 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500',
+                    'rows' => 2,
+                    'maxlength' => 200,
+                ],
+                'label_attr' => [
+                    'class' => 'block text-sm font-medium text-gray-700 mb-1',
                 ],
             ]);
     }

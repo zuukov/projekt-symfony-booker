@@ -58,6 +58,9 @@ class Business
     #[ORM\Column(length: 500, nullable: true)]
     private ?string $websiteUrl = null;
 
+    #[ORM\Column(length: 200, nullable: true)]
+    private ?string $specialNote = null;
+
     #[ORM\OneToMany(mappedBy: 'business', targetEntity: Service::class)]
     private Collection $services;
 
@@ -401,6 +404,18 @@ class Business
                 $review->setBusiness(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSpecialNote(): ?string
+    {
+        return $this->specialNote;
+    }
+
+    public function setSpecialNote(?string $specialNote): static
+    {
+        $this->specialNote = $specialNote;
 
         return $this;
     }

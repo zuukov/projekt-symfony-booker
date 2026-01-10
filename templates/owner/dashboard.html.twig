@@ -1,56 +1,51 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Owner Dashboard{% endblock %}
+{% block title %}Panel Właściciela{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <h1>Business Owner Dashboard</h1>
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">Panel Właściciela Biznesu</h1>
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Your Businesses</h2>
-                <a href="{{ path('owner_business_create') }}" class="btn btn-primary">Create New Business</a>
-            </div>
-
-            {% for message in app.flashes('success') %}
-                <div class="alert alert-success">{{ message }}</div>
-            {% endfor %}
-
-            {% if businesses is empty %}
-                <div class="alert alert-info">
-                    You don't have any businesses yet.
-                    <a href="{{ path('owner_business_create') }}" class="alert-link">Create your first business</a>.
-                </div>
-            {% else %}
-                <div class="row">
-                    {% for business in businesses %}
-                        <div class="col-md-6 col-lg-4 mb-4">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ business.businessName }}</h5>
-                                    <p class="card-text">{{ business.description ?: 'No description' }}</p>
-                                    <p class="card-text">
-                                        <small class="text-muted">
-                                            {{ business.city }}, {{ business.address }}
-                                        </small>
-                                    </p>
-                                </div>
-                                <div class="card-footer">
-                                    <a href="{{ path('owner_business_staff', {id: business.id}) }}" class="btn btn-outline-primary btn-sm">Manage Staff</a>
-                                    <a href="{{ path('owner_business_edit', {id: business.id}) }}" class="btn btn-outline-secondary btn-sm">Edit Business</a>
-                                    <form method="post" action="{{ path('owner_business_delete', {id: business.id}) }}" class="d-inline"
-                                          onsubmit="return confirm('Are you sure you want to delete this business?')">
-                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ business.id) }}">
-                                        <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-semibold text-gray-800">Twoje Biznesy</h2>
+        <a href="{{ path('owner_business_create') }}" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">Utwórz Nowy Biznes</a>
     </div>
+
+    {% for message in app.flashes('success') %}
+        <div class="p-4 mb-4 text-green-800 bg-green-100 border border-green-200 rounded-lg">{{ message }}</div>
+    {% endfor %}
+
+    {% if businesses is empty %}
+        <div class="p-4 text-blue-800 bg-blue-100 border border-blue-200 rounded-lg">
+            Nie masz jeszcze żadnych biznesów.
+            <a href="{{ path('owner_business_create') }}" class="font-semibold text-blue-900 hover:text-blue-700 underline">Utwórz swój pierwszy biznes</a>.
+        </div>
+    {% else %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for business in businesses %}
+                <div class="bg-white rounded-lg shadow hover:shadow-lg transition flex flex-col">
+                    <div class="px-6 py-4 flex-1">
+                        <h5 class="text-xl font-semibold text-gray-900 mb-2">{{ business.businessName }}</h5>
+                        <p class="text-gray-600 mb-3">{{ business.description ?: 'Brak opisu' }}</p>
+                        <p class="text-sm text-gray-500">
+                            {{ business.city }}, {{ business.address }}
+                        </p>
+                    </div>
+                    <div class="px-6 py-4 border-t border-gray-200 flex flex-wrap gap-2">
+                        <a href="{{ path('owner_business_staff', {id: business.id}) }}" class="px-3 py-1.5 text-sm border border-indigo-600 text-indigo-600 rounded-md hover:bg-indigo-50 transition">Zarządzaj Personelem</a>
+                        <a href="{{ path('owner_services', {id: business.id}) }}" class="px-3 py-1.5 text-sm border border-green-600 text-green-600 rounded-md hover:bg-green-50 transition">Usługi</a>
+                        <a href="{{ path('owner_calendar', {id: business.id}) }}" class="px-3 py-1.5 text-sm border border-purple-600 text-purple-600 rounded-md hover:bg-purple-50 transition">Kalendarz</a>
+                        <a href="{{ path('owner_bookings', {id: business.id}) }}" class="px-3 py-1.5 text-sm border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition">Rezerwacje</a>
+                        <a href="{{ path('owner_business_edit', {id: business.id}) }}" class="px-3 py-1.5 text-sm border border-gray-600 text-gray-600 rounded-md hover:bg-gray-50 transition">Edytuj Biznes</a>
+                        <form method="post" action="{{ path('owner_business_delete', {id: business.id}) }}" class="inline"
+                              onsubmit="return confirm('Czy na pewno chcesz usunąć ten biznes?')">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ business.id) }}">
+                            <button type="submit" class="px-3 py-1.5 text-sm border border-red-600 text-red-600 rounded-md hover:bg-red-50 transition">Usuń</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

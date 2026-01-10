@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Usługi - {{ staff.name }} {{ staff.surname }}{% endblock %}
+
+{% block body %}
+<div class="max-w-7xl mx-auto px-4 mt-8">
+    <div class="w-full">
+        <nav class="mb-6" aria-label="breadcrumb">
+            <ol class="flex space-x-2 text-sm text-gray-600">
+                <li><a href="{{ path('owner_dashboard') }}" class="hover:text-indigo-600">Panel właściciela</a></li>
+                <li class="before:content-['/'] before:mx-2"><a href="{{ path('owner_business_staff', {id: business.id}) }}" class="hover:text-indigo-600">{{ business.businessName }}</a></li>
+                <li class="before:content-['/'] before:mx-2 text-gray-900">Usługi - {{ staff.name }} {{ staff.surname }}</li>
+            </ol>
+        </nav>
+
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <h1 class="text-3xl font-bold text-gray-900">Usługi świadczone przez pracownika</h1>
+            <a href="{{ path('owner_business_staff', {id: business.id}) }}" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">Powrót</a>
+        </div>
+
+        {% for message in app.flashes('success') %}
+            <div class="p-4 mb-4 text-green-800 bg-green-100 border border-green-200 rounded-lg">{{ message }}</div>
+        {% endfor %}
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow mb-6">
+                    <div class="p-6 text-center">
+                        {% if staff.avatarImage %}
+                            <img src="{{ staff.avatarImage }}" class="rounded-full mx-auto block mb-4" alt="{{ staff.name }}" style="width: 100px; height: 100px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-gray-100 rounded-full mx-auto flex items-center justify-center mb-4" style="width: 100px; height: 100px;">
+                                <i class="fas fa-user fa-3x text-gray-400"></i>
+                            </div>
+                        {% endif %}
+
+                        <h5 class="text-xl font-semibold text-gray-900">{{ staff.name }} {{ staff.surname }}</h5>
+
+                        {% if staff.aboutMe %}
+                            <p class="text-gray-600 mt-2">{{ staff.aboutMe|slice(0, 100) }}{% if staff.aboutMe|length > 100 %}...{% endif %}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow">
+                    <div class="border-b border-gray-200 px-6 py-4">
+                        <h5 class="text-lg font-semibold text-gray-900">Wybierz usługi ({{ allServices|length }} dostępnych)</h5>
+                    </div>
+                    <div class="p-6">
+                        {% if allServices is empty %}
+                            <div class="p-4 mb-4 text-blue-800 bg-blue-100 border border-blue-200 rounded-lg">
+                                Brak dostępnych usług w tej firmie. <a href="{{ path('owner_business_staff', {id: business.id}) }}" class="underline hover:text-blue-900">Dodaj usługi</a> aby móc je przypisać pracownikom.
+                            </div>
+                        {% else %}
+                            <form method="post">
+                                <p class="text-gray-600 mb-4">
+                                    Zaznacz usługi, które ten pracownik może świadczyć:
+                                </p>
+
+                                <div class="space-y-2 mb-6">
+                                    {% for service in allServices %}
+                                        <label class="border border-gray-200 rounded-lg p-4 block hover:bg-gray-50 cursor-pointer">
+                                            <div class="flex items-start">
+                                                <input
+                                                    class="mt-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                                    type="checkbox"
+                                                    name="services[]"
+                                                    value="{{ service.id }}"
+                                                    id="service_{{ service.id }}"
+                                                    {% if service.id in currentServiceIds %}checked{% endif %}
+                                                >
+                                                <div class="ml-3 flex-grow">
+                                                    <div class="flex justify-between items-start">
+                                                        <div>
+                                                            <label class="font-semibold text-gray-900 cursor-pointer" for="service_{{ service.id }}">{{ service.name }}</label>
+                                                            {% if service.description %}
+                                                                <p class="text-sm text-gray-600 mt-1">{{ service.description|slice(0, 80) }}{% if service.description|length > 80 %}...{% endif %}</p>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="flex gap-2 ml-4">
+                                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">{{ service.durationMinutes }} min</span>
+                                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{{ service.price }} PLN</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+
+                                <button type="submit" class="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Zapisz zmiany</button>
+                            </form>
+
+                            <div class="mt-4 p-3 text-sm text-blue-800 bg-blue-100 border border-blue-200 rounded-lg">
+                                <strong>Wskazówka:</strong> Tylko zaznaczone usługi będą dostępne do rezerwacji z tym pracownikiem.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

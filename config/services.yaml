@@ -26,6 +26,11 @@ services:
         autoconfigure: true
         tags: ['controller.service_arguments']
 
+    App\Service\:
+        resource: '../src/Service'
+        autowire: true
+        autoconfigure: true
+
     App\Security\LoginSuccessHandler: ~
 
     # add more service definitions when explicit configuration is needed

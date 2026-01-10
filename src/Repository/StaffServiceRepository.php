@@ -15,4 +15,13 @@ class StaffServiceRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, StaffService::class);
     }
+
+    public function findServicesByStaff($staff): array
+    {
+        return $this->createQueryBuilder('ss')
+            ->andWhere('ss.staff = :staff')
+            ->setParameter('staff', $staff)
+            ->getQuery()
+            ->getResult();
+    }
 }

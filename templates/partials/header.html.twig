@@ -10,42 +10,34 @@
 
 			<nav class="home__nav flex items-center gap-2 sm:gap-3">
 				{% if app.user %}
-					{% if is_granted('ROLE_BUSINESS_OWNER') %}
-						<a href="{{ path('owner_dashboard') }}"
-						class="home__nav-link inline-flex items-center gap-2 px-3 py-2 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition">
-							<i class="fa-solid fa-briefcase home__icon"></i>
-							<span class="hidden sm:inline">Panel biznesu</span>
-						</a>
+					<a href="{{ path('user_bookings') }}" class="home__nav-link inline-flex items-center gap-2 px-3 py-2 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition">
+						<i class="fa-regular fa-calendar home__icon"></i>
+						<span class="hidden sm:inline">Moje rezerwacje</span>
+					</a>
 
-					{% else %}
-						<a href="{{ path('user_dashboard') }}"
-						class="home__nav-link inline-flex items-center gap-2 px-3 py-2 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition">
-							<i class="fa-regular fa-user home__icon"></i>
-							<span class="hidden sm:inline">Moje konto</span>
+					{% if app.user.role.value == 'BUSINESS_OWNER' %}
+						<a href="{{ path('owner_dashboard') }}" class="home__nav-link inline-flex items-center gap-2 px-3 py-2 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition">
+							<i class="fa-regular fa-building home__icon"></i>
+							<span class="hidden sm:inline">Panel właściciela</span>
 						</a>
 					{% endif %}
 
-					<a href="{{ path('app_logout') }}"
-					class="home__nav-link inline-flex items-center gap-2 px-3 py-2 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition">
-						<i class="fa-solid fa-right-from-bracket home__icon"></i>
-						<span class="hidden sm:inline">Wyloguj</span>
+					<a href="{{ path('app_logout') }}" class="home__nav-link inline-flex items-center gap-2 px-3 py-2 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition">
+						<i class="fa-solid fa-arrow-right-from-bracket home__icon"></i>
+						<span class="hidden sm:inline">Wyloguj się</span>
 					</a>
-
 				{% else %}
-					<a href="{{ path('app_login') }}"
-					class="home__nav-link inline-flex items-center gap-2 px-3 py-2 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition">
+					<a href="{{ path('app_login') }}" class="home__nav-link inline-flex items-center gap-2 px-3 py-2 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition">
 						<i class="fa-regular fa-user home__icon"></i>
 						<span class="hidden sm:inline">Zaloguj się</span>
 					</a>
 
-					<a href="{{ path('app_register', { typ_konta: 'uzytkownik' }) }}"
-					class="home__nav-link inline-flex items-center gap-2 px-3 py-2 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition">
+					<a href="{{ path('app_register', { typ_konta: 'uzytkownik' }) }}" class="home__nav-link inline-flex items-center gap-2 px-3 py-2 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition">
 						<i class="fa-regular fa-square-plus home__icon"></i>
 						<span class="hidden sm:inline">Załóż konto</span>
 					</a>
 
-					<a href="{{ path('app_register', { typ_konta: 'biznes' }) }}"
-					class="home__nav-cta inline-flex items-center justify-center bg-white text-[color:var(--c-primary)] px-6 py-3 font-semibold shadow-sm hover:shadow-md transition">
+					<a href="{{ path('app_register', { typ_konta: 'biznes' }) }}" class="home__nav-cta inline-flex items-center justify-center bg-white text-[color:var(--c-primary)] px-6 py-3 font-semibold shadow-sm hover:shadow-md transition">
 						Dodaj swój biznes
 					</a>
 				{% endif %}

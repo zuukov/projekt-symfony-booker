@@ -15,4 +15,31 @@ class StaffTimeOffRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, StaffTimeOff::class);
     }
+
+    public function findByStaffAndDate($staff, \DateTime $start, \DateTime $end): array
+    {
+        return $this->createQueryBuilder('sto')
+            ->andWhere('sto.staff = :staff')
+            ->andWhere('sto.startsAt < :end')
+            ->andWhere('sto.endsAt > :start')
+            ->setParameter('staff', $staff)
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findUpcomingByStaff($staff): array
+    {
+        $now = new \DateTime();
+
+        return $this->createQueryBuilder('sto')
+            ->andWhere('sto.staff = :staff')
+            ->andWhere('sto.startsAt >= :now')
+            ->setParameter('staff', $staff)
+            ->setParameter('now', $now)
+            ->orderBy('sto.startsAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

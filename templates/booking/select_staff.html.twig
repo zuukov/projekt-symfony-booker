@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Wybierz pracownika - {{ service.name }}{% endblock %}
+
+{% block body %}
+<div class="max-w-7xl mx-auto px-4 mt-8">
+    <div class="w-full">
+        <nav class="mb-6" aria-label="breadcrumb">
+            <ol class="flex space-x-2 text-sm text-gray-600">
+                <li><a href="{{ path('app_home') }}" class="hover:text-indigo-600">Strona główna</a></li>
+                <li class="before:content-['/'] before:mx-2 text-gray-900">{{ business.businessName }}</li>
+                <li class="before:content-['/'] before:mx-2 text-gray-900">{{ service.name }}</li>
+            </ol>
+        </nav>
+
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ business.businessName }}</h1>
+            <div class="bg-white rounded-lg shadow mb-6">
+                <div class="p-6">
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">{{ service.name }}</h3>
+                    <p class="text-gray-600 mb-4">{{ service.description }}</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <strong class="text-gray-700">Czas trwania:</strong> <span class="text-gray-900">{{ service.durationMinutes }} minut</span>
+                        </div>
+                        <div>
+                            <strong class="text-gray-700">Cena:</strong> <span class="text-gray-900">{{ service.price }} PLN</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Wybierz pracownika</h2>
+
+        {% if staffMembers is empty %}
+            <div class="p-4 mb-4 text-blue-800 bg-blue-100 border border-blue-200 rounded-lg">
+                Brak dostępnych pracowników dla tej usługi.
+            </div>
+        {% else %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for staff in staffMembers %}
+                    <div class="bg-white rounded-lg shadow flex flex-col h-full">
+                        <div class="p-6 flex-grow">
+                            {% if staff.avatarImage %}
+                                <img src="{{ staff.avatarImage }}" class="rounded-full mx-auto block mb-4" alt="{{ staff.name }}" style="width: 100px; height: 100px; object-fit: cover;">
+                            {% else %}
+                                <div class="bg-gray-100 rounded-full mx-auto flex items-center justify-center mb-4" style="width: 100px; height: 100px;">
+                                    <i class="fas fa-user fa-3x text-gray-400"></i>
+                                </div>
+                            {% endif %}
+
+                            <h5 class="text-lg font-semibold text-center text-gray-900">{{ staff.name }} {{ staff.surname }}</h5>
+
+                            {% if staff.aboutMe %}
+                                <p class="text-center text-gray-600 mt-2">
+                                    {{ staff.aboutMe|slice(0, 150) }}{% if staff.aboutMe|length > 150 %}...{% endif %}
+                                </p>
+                            {% endif %}
+
+                            {% if staff.experience %}
+                                <p class="text-sm text-gray-500 mt-2">
+                                    <strong>Doświadczenie:</strong> {{ staff.experience|slice(0, 100) }}...
+                                </p>
+                            {% endif %}
+                        </div>
+                        <div class="border-t border-gray-200 p-4 text-center">
+                            <a href="{{ path('booking_select_datetime', {
+                                businessId: business.id,
+                                serviceId: service.id,
+                                staffId: staff.id
+                            }) }}" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 inline-block">Wybierz</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

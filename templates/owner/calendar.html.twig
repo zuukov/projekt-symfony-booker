@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Kalendarz - {{ business.businessName }}{% endblock %}
+
+{% block body %}
+<div class="max-w-7xl mx-auto px-4 mt-8">
+    <div class="w-full">
+        <nav class="mb-6" aria-label="breadcrumb">
+            <ol class="flex space-x-2 text-sm text-gray-600">
+                <li><a href="{{ path('owner_dashboard') }}" class="hover:text-indigo-600">Panel właściciela</a></li>
+                <li class="before:content-['/'] before:mx-2"><a href="{{ path('owner_business_staff', {id: business.id}) }}" class="hover:text-indigo-600">{{ business.businessName }}</a></li>
+                <li class="before:content-['/'] before:mx-2 text-gray-900">Kalendarz</li>
+            </ol>
+        </nav>
+
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <h1 class="text-3xl font-bold text-gray-900">Kalendarz rezerwacji</h1>
+            <a href="{{ path('owner_business_staff', {id: business.id}) }}" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">Powrót</a>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="mb-4 flex gap-4 flex-wrap">
+                <div class="flex items-center gap-2">
+                    <span class="w-4 h-4 rounded" style="background-color: #fbbf24;"></span>
+                    <span class="text-sm">Oczekująca</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-4 h-4 rounded" style="background-color: #10b981;"></span>
+                    <span class="text-sm">Potwierdzona</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-4 h-4 rounded" style="background-color: #3b82f6;"></span>
+                    <span class="text-sm">Zakończona</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-4 h-4 rounded" style="background-color: #ef4444;"></span>
+                    <span class="text-sm">Anulowana</span>
+                </div>
+            </div>
+
+            <div id="calendar"></div>
+        </div>
+    </div>
+</div>
+
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/locales/pl.global.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const calendarEl = document.getElementById('calendar');
+
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        locale: 'pl',
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        buttonText: {
+            today: 'Dziś',
+            month: 'Miesiąc',
+            week: 'Tydzień',
+            day: 'Dzień'
+        },
+        events: '{{ path('owner_calendar_data', {id: business.id}) }}',
+        eventClick: function(info) {
+            const event = info.event;
+            const props = event.extendedProps;
+
+            let statusText = '';
+            switch(props.status) {
+                case 'pending': statusText = 'Oczekująca'; break;
+                case 'confirmed': statusText = 'Potwierdzona'; break;
+                case 'completed': statusText = 'Zakończona'; break;
+                case 'cancelled': statusText = 'Anulowana'; break;
+            }
+
+            alert(
+                'Rezerwacja:\n' +
+                'Usługa: ' + event.title + '\n' +
+                'Klient: ' + props.customerName + '\n' +
+                'Data: ' + event.start.toLocaleDateString('pl-PL') + '\n' +
+                'Godzina: ' + event.start.toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'}) +
+                ' - ' + event.end.toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'}) + '\n' +
+                'Cena: ' + props.price + ' PLN\n' +
+                'Status: ' + statusText
+            );
+        },
+        eventTimeFormat: {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        },
+        slotLabelFormat: {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        },
+        height: 'auto'
+    });
+
+    calendar.render();
+});
+</script>
+{% endblock %}

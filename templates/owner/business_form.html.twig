@@ -1,76 +1,89 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ is_edit ? 'Edit Business' : 'Create Business' }}{% endblock %}
+{% block title %}{{ is_edit ? 'Edytuj Biznes' : 'Utwórz Biznes' }}{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h1>{{ is_edit ? 'Edit Business' : 'Create New Business' }}</h1>
+<div class="max-w-7xl mx-auto px-4 mt-8">
+    <div class="flex justify-center">
+        <div class="w-full max-w-4xl">
+            <div class="bg-white rounded-lg shadow">
+                <div class="border-b border-gray-200 px-6 py-4">
+                    <h1 class="text-2xl font-bold text-gray-900">{{ is_edit ? 'Edytuj Biznes' : 'Utwórz Nowy Biznes' }}</h1>
                 </div>
-                <div class="card-body">
+                <div class="px-6 py-6">
                     {% for message in app.flashes('success') %}
-                        <div class="alert alert-success">{{ message }}</div>
+                        <div class="p-4 mb-4 text-green-800 bg-green-100 border border-green-200 rounded-lg">{{ message }}</div>
                     {% endfor %}
 
                     {{ form_start(form) }}
-                        <div class="row">
-                            <div class="col-md-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
                                 {{ form_row(form.businessName) }}
                             </div>
-                            <div class="col-md-6">
+                            <div>
                                 {{ form_row(form.formalBusinessName) }}
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div>
                                 {{ form_row(form.phone) }}
                             </div>
-                            <div class="col-md-6">
+                            <div>
                                 {{ form_row(form.secondaryPhone) }}
                             </div>
                         </div>
 
-                        {{ form_row(form.email) }}
+                        <div class="mt-4">
+                            {{ form_row(form.email) }}
+                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div>
                                 {{ form_row(form.city) }}
                             </div>
-                            <div class="col-md-6">
+                            <div>
                                 {{ form_row(form.postalCode) }}
                             </div>
                         </div>
 
-                        {{ form_row(form.address) }}
+                        <div class="mt-4">
+                            {{ form_row(form.address) }}
+                        </div>
 
-                        {{ form_row(form.description) }}
+                        <div class="mt-4">
+                            {{ form_row(form.description) }}
+                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
+                        <div class="mt-4">
+                            {{ form_row(form.specialNote) }}
+                            <p class="text-xs text-gray-500 mt-1">
+                                <span id="char-count">0</span>/200 znaków
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div>
                                 {{ form_row(form.instagramUrl) }}
                             </div>
-                            <div class="col-md-6">
+                            <div>
                                 {{ form_row(form.facebookUrl) }}
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div>
                                 {{ form_row(form.websiteUrl) }}
                             </div>
-                            <div class="col-md-6">
+                            <div>
                                 {{ form_row(form.logoUrl) }}
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-between mt-4">
-                            <a href="{{ path('owner_dashboard') }}" class="btn btn-secondary">Cancel</a>
-                            <button type="submit" class="btn btn-primary">
-                                {{ is_edit ? 'Update Business' : 'Create Business' }}
+                        <div class="flex justify-between mt-6">
+                            <a href="{{ path('owner_dashboard') }}" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">Anuluj</a>
+                            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                                {{ is_edit ? 'Zaktualizuj Biznes' : 'Utwórz Biznes' }}
                             </button>
                         </div>
                     {{ form_end(form) }}
@@ -79,4 +92,20 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const specialNoteField = document.querySelector('textarea[name*="specialNote"]');
+    const charCountSpan = document.getElementById('char-count');
+
+    if (specialNoteField && charCountSpan) {
+        function updateCharCount() {
+            charCountSpan.textContent = specialNoteField.value.length;
+        }
+
+        updateCharCount();
+        specialNoteField.addEventListener('input', updateCharCount);
+    }
+});
+</script>
 {% endblock %}
