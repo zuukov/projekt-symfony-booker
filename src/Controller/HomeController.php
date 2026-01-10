@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Business;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -112,6 +113,19 @@ final class HomeController extends AbstractController
             'featured' => $featured,
             'cities' => $cities,
             'blog' => $blog,
+        ]);
+    }
+
+    #[Route('/firma/{id}', name: 'business_view')]
+    public function businessView(Business $business): Response
+    {
+        $services = $business->getServices()->filter(fn($s) => $s->isActive());
+        $staff = $business->getStaff();
+
+        return $this->render('home/business_view.html.twig', [
+            'business' => $business,
+            'services' => $services,
+            'staff' => $staff,
         ]);
     }
 }

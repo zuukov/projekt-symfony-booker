@@ -66,6 +66,7 @@ class SearchService
                 $qb->expr()->orX(
                     $qb->expr()->like('LOWER(s.name)', ':query'),
                     $qb->expr()->like('LOWER(s.description)', ':query'),
+                    $qb->expr()->like('LOWER(c.categoryFullName)', ':query'),
                     $qb->expr()->like('LOWER(c.categoryFriendlyName)', ':query'),
                     $qb->expr()->like('LOWER(b.businessName)', ':query')
                 )

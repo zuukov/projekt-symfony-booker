@@ -1,0 +1,131 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ business.businessName }}{% endblock %}
+
+{% block header %}
+    {% include 'partials/header-alt.html.twig' %}
+{% endblock %}
+
+{% block body %}
+<div class="mx-auto w-[min(1100px,92%)] py-10">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        {% if business.logoUrl %}
+            <div class="h-48 bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                <img src="{{ business.logoUrl }}" alt="{{ business.businessName }}" class="h-32 w-auto">
+            </div>
+        {% else %}
+            <div class="h-48 bg-gradient-to-br from-indigo-500 to-purple-600"></div>
+        {% endif %}
+
+        <div class="p-8">
+            <h1 class="text-3xl font-bold text-slate-900 mb-2">{{ business.businessName }}</h1>
+            <p class="text-slate-600 mb-4">
+                <i class="fas fa-map-marker-alt"></i> {{ business.address }}, {{ business.postalCode }} {{ business.city }}
+            </p>
+
+            {% if business.description %}
+                <p class="text-slate-700 mb-6">{{ business.description }}</p>
+            {% endif %}
+
+            {% if business.specialNote %}
+                <div class="p-4 mb-6 text-orange-800 bg-orange-100 border border-orange-200 rounded-lg">
+                    <i class="fas fa-info-circle"></i> <strong>Uwaga:</strong> {{ business.specialNote }}
+                </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <p class="text-sm font-medium text-slate-700 mb-1">Telefon:</p>
+                    <p class="text-slate-900">
+                        <i class="fas fa-phone"></i> {{ business.phone }}
+                        {% if business.secondaryPhone %}
+                            <br><i class="fas fa-phone"></i> {{ business.secondaryPhone }}
+                        {% endif %}
+                    </p>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-slate-700 mb-1">Email:</p>
+                    <p class="text-slate-900"><i class="fas fa-envelope"></i> {{ business.email }}</p>
+                </div>
+            </div>
+
+            {% if business.instagramUrl or business.facebookUrl or business.websiteUrl %}
+                <div class="flex gap-3 mb-6">
+                    {% if business.instagramUrl %}
+                        <a href="{{ business.instagramUrl }}" target="_blank" class="px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700">
+                            <i class="fab fa-instagram"></i> Instagram
+                        </a>
+                    {% endif %}
+                    {% if business.facebookUrl %}
+                        <a href="{{ business.facebookUrl }}" target="_blank" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                            <i class="fab fa-facebook"></i> Facebook
+                        </a>
+                    {% endif %}
+                    {% if business.websiteUrl %}
+                        <a href="{{ business.websiteUrl }}" target="_blank" class="px-4 py-2 bg-slate-600 text-white rounded-md hover:bg-slate-700">
+                            <i class="fas fa-globe"></i> Strona WWW
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if services is not empty %}
+        <div class="mt-8">
+            <h2 class="text-2xl font-bold text-slate-900 mb-4">Dostępne usługi</h2>
+            <div class="grid gap-4 sm:grid-cols-2">
+                {% for service in services %}
+                    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition">
+                        <h3 class="text-lg font-semibold text-slate-900">{{ service.name }}</h3>
+                        <p class="text-sm text-slate-600 mt-1">{{ service.category.categoryFriendlyName }}</p>
+                        {% if service.description %}
+                            <p class="text-sm text-slate-700 mt-2">
+                                {{ service.description|slice(0, 100) }}{% if service.description|length > 100 %}...{% endif %}
+                            </p>
+                        {% endif %}
+                        <div class="mt-3 flex gap-2">
+                            <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                <i class="fas fa-clock"></i> {{ service.durationMinutes }} min
+                            </span>
+                            <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                <i class="fas fa-money-bill"></i> {{ service.price }} PLN
+                            </span>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{{ path('booking_select_staff', {businessId: business.id, serviceId: service.id}) }}" class="block w-full text-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                                Zarezerwuj
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if staff is not empty %}
+        <div class="mt-8">
+            <h2 class="text-2xl font-bold text-slate-900 mb-4">Nasz zespół</h2>
+            <div class="grid gap-4 sm:grid-cols-3">
+                {% for staffMember in staff %}
+                    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm text-center">
+                        {% if staffMember.avatarImage %}
+                            <img src="{{ staffMember.avatarImage }}" class="rounded-full mx-auto mb-3" alt="{{ staffMember.name }}" style="width: 80px; height: 80px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-slate-100 rounded-full mx-auto flex items-center justify-center mb-3" style="width: 80px; height: 80px;">
+                                <i class="fas fa-user fa-2x text-slate-400"></i>
+                            </div>
+                        {% endif %}
+                        <h3 class="text-lg font-semibold text-slate-900">{{ staffMember.name }} {{ staffMember.surname }}</h3>
+                        {% if staffMember.aboutMe %}
+                            <p class="text-sm text-slate-600 mt-2">
+                                {{ staffMember.aboutMe|slice(0, 80) }}{% if staffMember.aboutMe|length > 80 %}...{% endif %}
+                            </p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

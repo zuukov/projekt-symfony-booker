@@ -78,8 +78,26 @@ class BookingRepository extends ServiceEntityRepository
     public function findByBusiness($business): array
     {
         return $this->createQueryBuilder('b')
+            ->leftJoin('b.service', 's')
+            ->leftJoin('b.staff', 'st')
+            ->leftJoin('b.user', 'u')
+            ->addSelect('s', 'st', 'u')
             ->andWhere('b.business = :business')
             ->setParameter('business', $business)
+            ->orderBy('b.startsAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByUser($user): array
+    {
+        return $this->createQueryBuilder('b')
+            ->leftJoin('b.service', 's')
+            ->leftJoin('b.staff', 'st')
+            ->leftJoin('b.business', 'bus')
+            ->addSelect('s', 'st', 'bus')
+            ->andWhere('b.user = :user')
+            ->setParameter('user', $user)
             ->orderBy('b.startsAt', 'DESC')
             ->getQuery()
             ->getResult();
