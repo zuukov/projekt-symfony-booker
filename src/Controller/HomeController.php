@@ -17,6 +17,7 @@ final class HomeController extends AbstractController
             [
                 'name' => 'Ciach&Style Barbershop',
                 'address' => 'Księdza Józefa • 30-004, Kraków',
+                'url' => '/business/4',
                 'rating' => 5.0,
                 'reviews' => 168,
                 'image' => 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1200&q=80',
@@ -25,6 +26,7 @@ final class HomeController extends AbstractController
             [
                 'name' => 'Barber SHOP & Tattoo Studio',
                 'address' => 'Top Market • 04-920, Piła',
+                'url' => '/business/4',
                 'rating' => 4.9,
                 'reviews' => 220,
                 'image' => 'https://images.unsplash.com/photo-1517832207067-4db24a2ae47c?auto=format&fit=crop&w=1200&q=80',
@@ -33,6 +35,7 @@ final class HomeController extends AbstractController
             [
                 'name' => 'CUT & GO Barbershop',
                 'address' => 'ul. Łużycka • 10-406, Warszawa',
+                'url' => '/business/4',
                 'rating' => 4.9,
                 'reviews' => 321,
                 'image' => 'https://images.unsplash.com/photo-1517832207067-4db24a2ae47c?auto=format&fit=crop&w=1200&q=80',
@@ -41,6 +44,7 @@ final class HomeController extends AbstractController
             [
                 'name' => 'Barber Barbershop Skawina',
                 'address' => 'ul. Kamienna • 32-050, Skawina',
+                'url' => '/business/4',
                 'rating' => 4.9,
                 'reviews' => 115,
                 'image' => 'https://images.unsplash.com/photo-1517832207067-4db24a2ae47c?auto=format&fit=crop&w=1200&q=80',
@@ -49,6 +53,7 @@ final class HomeController extends AbstractController
             [
                 'name' => 'Studio Urody Nova',
                 'address' => 'Centrum • 90-001, Łódź',
+                'url' => '/business/4',
                 'rating' => 4.8,
                 'reviews' => 98,
                 'image' => 'https://images.unsplash.com/photo-1517832207067-4db24a2ae47c?auto=format&fit=crop&w=1200&q=80',
@@ -57,6 +62,7 @@ final class HomeController extends AbstractController
             [
                 'name' => 'zzz test',
                 'address' => 'Księdza Józefa • 30-004, Kraków',
+                'url' => '/business/4',
                 'rating' => 5.0,
                 'reviews' => 168,
                 'image' => 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1200&q=80',
