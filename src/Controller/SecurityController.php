@@ -21,14 +21,14 @@ class SecurityController extends AbstractController
         private UserPasswordHasherInterface $passwordHasher,
     ) {}
 
-    #[Route('/login', name: 'app_login')]
+    #[Route('/login', name: 'app_login', methods: ['GET', 'POST'])]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        error_log('Login method called');
-     
+        if ($this->getUser()) {
+            return $this->redirectToRoute('user_dashboard');
+        }
+
         $error = $authenticationUtils->getLastAuthenticationError();
-        dump("xd");
-      
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.html.twig', [
@@ -40,6 +40,10 @@ class SecurityController extends AbstractController
     #[Route('/register', name: 'app_register')]
     public function register(Request $request): Response
     {
+                if ($this->getUser()) {
+            return $this->redirectToRoute('user_dashboard');
+        }
+        
         $form = $this->createForm(RegistrationFormType::class);
         $form->handleRequest($request);
         $typ_konta = (string) $request->query->get('typ_konta', '');
