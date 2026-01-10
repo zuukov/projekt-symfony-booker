@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class BusinessController extends AbstractController
 {
-    #[Route('/business/{id}', name: 'business_index', requirements: ['id' => '\d+'])]
+    #[Route('/firma/{id}', name: 'business_index', requirements: ['id' => '\d+'])]
     public function index(int $id): Response
     {
         // na razie wszystko rzucam jako mock do tego widoku dla testow, potem zepniemy to z bazą i real danymi

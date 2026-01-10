@@ -9,11 +9,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/user')]
+#[Route('/uzytkownik')]
 #[IsGranted('IS_AUTHENTICATED_FULLY')]
 class UserController extends AbstractController
 {
-    #[Route('/dashboard', name: 'user_dashboard')]
+    #[Route('/moje-konto', name: 'user_dashboard')]
     public function dashboard(): Response
     {
         $user = $this->getUser();
