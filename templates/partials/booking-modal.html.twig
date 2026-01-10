@@ -1,0 +1,210 @@
+<div id="bookingOverlay" class="booking-modal">
+	<div class="booking-modal__overlay" data-booking-close></div>
+
+	<div class="booking-modal__panel">
+		<button type="button" class="booking-modal__close" data-booking-close>
+			<i class="fa-solid fa-xmark"></i>
+		</button>
+
+		<div class="booking-modal__body">
+			<section class="booking-step booking-step--1 is-active" data-step="1">
+				<header class="booking-step__header">
+					<h2 class="booking-step__title">Wybierz datę i godzinę</h2>
+					<p class="booking-step__subtitle">Zaznacz dostępny termin oraz wybierz pracownika.</p>
+				</header>
+
+				<div class="booking-step__grid flex flex-col lg:flex-row gap-6 items-start">
+					<div class="booking-step__left w-full lg:w-2/3 min-w-0">
+						<div class="booking-calendar rounded-2xl bg-white border border-black/10 shadow-sm p-4 sm:p-5">
+							<div class="booking-calendar__toolbar flex items-center justify-between gap-3">
+								<div class="booking-calendar__hint rounded-xl bg-[rgba(47,53,66,0.06)] border border-black/10 px-3 py-2 text-sm text-[var(--c-primary)]">
+									<i class="fa-solid fa-circle-info mr-2 text-[var(--c-secondary)]"></i>
+									Dostępne dni są podświetlone.
+								</div>
+								<div class="booking-calendar__legend hidden sm:flex items-center gap-3 text-xs text-[var(--c-secondary)]">
+									<span class="inline-flex items-center gap-2"><span class="booking-legend booking-legend--available"></span> dostępne</span>
+									<span class="inline-flex items-center gap-2"><span class="booking-legend booking-legend--unavailable"></span> niedostępne</span>
+								</div>
+							</div>
+
+							<div class="booking-calendar__picker flex flex-row mt-4">
+								<input id="bookingDate" type="text" class="booking-calendar__input w-full rounded-2xl border border-black/10 px-4 py-3 outline-none" placeholder="Wybierz datę…" readonly>
+							</div>
+						</div>
+
+						<div class="booking-times mt-4 rounded-2xl bg-white border border-black/10 shadow-sm p-4 sm:p-5">
+							<div class="booking-times__head flex items-center justify-between gap-3">
+								<h3 class="font-bold text-[var(--c-primary)] text-lg">Dostępne godziny</h3>
+								<div class="booking-times__selected text-sm text-[var(--c-secondary)]">
+									Wybrano: <span class="font-bold text-[var(--c-primary)]" data-selected-time>—</span>
+								</div>
+							</div>
+
+							<div class="booking-times__grid mt-4 flex flex-col md:flex-row gap-4">
+								<div class="booking-times__col w-full md:w-1/3">
+									<div class="booking-times__label">Rano</div>
+									<div class="booking-times__list" data-times-col="morning"></div>
+								</div>
+
+								<div class="booking-times__col w-full md:w-1/3">
+									<div class="booking-times__label">Popołudnie</div>
+									<div class="booking-times__list" data-times-col="afternoon"></div>
+								</div>
+
+								<div class="booking-times__col w-full md:w-1/3">
+									<div class="booking-times__label">Wieczór</div>
+									<div class="booking-times__list" data-times-col="evening"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<aside class="booking-step__right w-full lg:w-1/3 shrink-0">
+						<div class="booking-summary rounded-2xl bg-white border border-black/10 shadow-sm p-4 sm:p-5">
+							<h3 class="font-bold text-[var(--c-primary)] text-lg">Twoje zamówienie</h3>
+
+							<div class="booking-summary__box mt-3 rounded-2xl bg-[rgba(47,53,66,0.06)] border border-black/10 p-3">
+								<div class="booking-summary__service flex items-start justify-between gap-3">
+									<div class="min-w-0">
+										<div class="font-bold text-[var(--c-primary)] truncate" data-summary-service-name>—</div>
+										<div class="text-sm text-[var(--c-secondary)]" data-summary-service-duration>—</div>
+									</div>
+									<div class="font-bold text-[var(--c-primary)] whitespace-nowrap" data-summary-service-price>—</div>
+								</div>
+							</div>
+
+							<div class="booking-summary__staff mt-4">
+								<div class="flex items-center justify-between">
+									<div class="font-bold text-[var(--c-primary)]">Dostępni pracownicy</div>
+									<div class="text-xs text-[var(--c-secondary)]" data-selected-staff>Wybrano: —</div>
+								</div>
+
+								<div class="swiper booking-staff-swiper mt-3">
+									<div class="swiper-wrapper">
+										{% for person in staff %}
+											<div class="swiper-slide">
+												<button type="button" class="booking-staff__item" data-staff-id="{{ person.id }}" data-staff-name="{{ person.name }}">
+													<img src="{{ person.avatar }}" alt="{{ person.name }}" class="booking-staff__avatar" >
+													<div class="booking-staff__name">{{ person.name }}</div>
+												</button>
+											</div>
+										{% endfor %}
+									</div>
+								</div>
+							</div>
+
+							<div class="booking-summary__total mt-5 flex items-center justify-between border-t border-black/10 pt-4">
+								<span class="text-sm text-[var(--c-secondary)] font-semibold">Łączna suma</span>
+								<span class="text-lg font-black text-[var(--c-primary)]" data-summary-total>—</span>
+							</div>
+
+							<button type="button" class="booking-summary__next mt-4 w-full inline-flex items-center justify-center px-5 py-3 rounded-2xl font-black text-white bg-[var(--c-cta)] hover:bg-[var(--c-cta-hover)] transition disabled:opacity-50 disabled:cursor-not-allowed" data-booking-next disabled>
+								Dalej
+							</button>
+
+							<div class="mt-3 text-xs text-[var(--c-secondary)]">
+								Aby przejść dalej wybierz datę i godzinę.
+							</div>
+						</div>
+					</aside>
+				</div>
+			</section>
+
+			<section class="booking-step booking-step--2" data-step="2">
+				<header class="booking-step__header">
+					<button type="button" class="booking-step__back" data-booking-back>
+						<i class="fa-solid fa-arrow-left"></i>
+					</button>
+					<h2 class="booking-step__title">Płatność</h2>
+					<p class="booking-step__subtitle">Symulacja płatności (mock).</p>
+				</header>
+
+				<div class="booking-pay flex flex-col lg:flex-row gap-6 items-start">
+					<div class="w-full lg:w-2/3 min-w-0">
+						<div class="rounded-2xl bg-white border border-black/10 shadow-sm p-4 sm:p-5">
+							<h3 class="font-bold text-[var(--c-primary)] text-lg">Wybierz metodę</h3>
+
+							<div class="mt-4 flex flex-col gap-3">
+								<label class="booking-radio">
+									<input type="radio" name="paymethod" checked>
+									<span class="booking-radio__box">
+										<i class="fa-solid fa-credit-card"></i>
+										Karta
+									</span>
+								</label>
+
+								<label class="booking-radio">
+									<input type="radio" name="paymethod">
+									<span class="booking-radio__box">
+										<i class="fa-solid fa-building-columns"></i>
+										Przelew
+									</span>
+								</label>
+
+								<label class="booking-radio">
+									<input type="radio" name="paymethod">
+									<span class="booking-radio__box">
+										<i class="fa-brands fa-apple-pay"></i>
+										Apple Pay
+									</span>
+								</label>
+							</div>
+
+							<button type="button" class="mt-5 w-full inline-flex items-center justify-center px-5 py-3 rounded-2xl font-black text-white bg-[var(--c-cta)] hover:bg-[var(--c-cta-hover)] transition" data-booking-pay>
+								Zapłać
+							</button>
+
+							<div class="booking-pay__loading mt-3 hidden items-center justify-center gap-2 text-sm text-[var(--c-secondary)]" data-pay-loading>
+								<span class="booking-spinner"></span>
+								Przetwarzanie płatności…
+							</div>
+						</div>
+					</div>
+
+					<aside class="w-full lg:w-1/3 shrink-0">
+						<div class="rounded-2xl bg-white border border-black/10 shadow-sm p-4 sm:p-5">
+							<h3 class="font-bold text-[var(--c-primary)] text-lg">Podsumowanie</h3>
+							<div class="mt-3 text-sm text-[var(--c-secondary)] leading-relaxed">
+								<div><span class="font-bold text-[var(--c-primary)]">Usługa:</span> <span data-confirm-service>—</span></div>
+								<div><span class="font-bold text-[var(--c-primary)]">Pracownik:</span> <span data-confirm-staff>—</span></div>
+								<div><span class="font-bold text-[var(--c-primary)]">Termin:</span> <span data-confirm-datetime>—</span></div>
+								<div class="mt-3 flex items-center justify-between border-t border-black/10 pt-3">
+									<span class="font-semibold">Łącznie</span>
+									<span class="font-black text-[var(--c-primary)]" data-confirm-total>—</span>
+								</div>
+							</div>
+						</div>
+					</aside>
+				</div>
+			</section>
+
+			<section class="booking-step booking-step--3" data-step="3">
+				<header class="booking-step__header">
+					<h2 class="booking-step__title">Zarezerwowano!</h2>
+					<p class="booking-step__subtitle">Twoja wizyta została pomyślnie zarejestrowana (mock).</p>
+				</header>
+
+				<div class="rounded-2xl bg-white border border-black/10 shadow-sm p-4 sm:p-6">
+					<div class="flex items-start gap-3">
+						<div class="text-emerald-600 text-2xl">
+							<i class="fa-solid fa-circle-check"></i>
+						</div>
+						<div class="min-w-0">
+							<div class="font-black text-[var(--c-primary)] text-lg">Szczegóły rezerwacji</div>
+							<div class="mt-2 text-sm text-[var(--c-secondary)] leading-relaxed">
+								<div><span class="font-bold text-[var(--c-primary)]">Usługa:</span> <span data-done-service>—</span></div>
+								<div><span class="font-bold text-[var(--c-primary)]">Pracownik:</span> <span data-done-staff>—</span></div>
+								<div><span class="font-bold text-[var(--c-primary)]">Termin:</span> <span data-done-datetime>—</span></div>
+								<div><span class="font-bold text-[var(--c-primary)]">Cena:</span> <span data-done-total>—</span></div>
+							</div>
+						</div>
+					</div>
+
+					<button type="button" class="mt-6 w-full inline-flex items-center justify-center px-5 py-3 rounded-2xl font-black text-white bg-[var(--c-primary)] hover:opacity-90 transition" data-booking-close>
+						Zamknij
+					</button>
+				</div>
+			</section>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,709 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Booker - {{ business.name }}{% endblock %}
+
+{% block header %}
+	{% include 'partials/header-alt.html.twig' %}
+{% endblock %}
+
+{% block body %}
+<main class="business-page bg-[var(--c-surface)] py-8">
+	<div class="business-page__container">
+		<div class="flex flex-col lg:flex-row gap-8 items-start">
+			<section class="order-1 w-full lg:w-2/3 min-w-0 flex flex-col gap-6">
+				<article class="business-hero card p-4 sm:p-5">
+					<button type="button" class="business-hero__featured business-lightbox-trigger w-full" data-lightbox-src="{{ business.featured_image }}">
+						<img src="{{ business.featured_image }}" alt="{{ business.name }} - zdjęcie główne" class="business-hero__featured-img w-full h-[400px] sm:h-[320px] md:h-[500px] object-cover rounded-md z-img-border">
+					</button>
+
+					<div class="business-hero__thumbs mt-2 grid grid-cols-3 sm:grid-cols-5 gap-2">
+						{% for img in gallery|slice(0, 5) %}
+							<button type="button" class="business-hero__thumb business-lightbox-trigger w-full" data-lightbox-src="{{ img }}">
+								<img src="{{ img }}" alt="{{ business.name }} - miniatura {{ loop.index }}" class="w-full h-[72px] sm:h-[96px] object-cover rounded-md z-img-border">
+							</button>
+						{% endfor %}
+					</div>
+
+					<div class="business-info mt-8 flex flex-col gap-2">
+						<h1 class="business-info__name text-2xl sm:text-4xl font-bold text-[var(--c-primary)] leading-tight">{{ business.name }}</h1>
+
+						<div class="business-info__meta mt-3 flex flex-col sm:flex-col sm:gap-4 gap-2">
+							<div class="flex items-center gap-2">
+								<i class="fa-solid fa-location-dot"></i>
+								<span class="font-semibold">{{ business.address_line }}, {{ business.postcode }} {{ business.city }}</span>
+							</div>
+
+							<div class="flex items-center gap-2">
+								<span class="business-info__stars text-amber-500 font-black tracking-[2px]">
+									{% for i in 1..5 %}<i class="fa-solid fa-star"></i>{% endfor %}
+								</span>
+								<span class="font-black text-[var(--c-primary)]">{{ business.rating|number_format(1, '.', '') }}</span>
+								<span class="text-sm">({{ business.reviews_count }} opinii)</span>
+							</div>
+						</div>
+					</div>
+				</article>
+
+				<article class="business-services card card--services p-4 sm:p-5">
+					<div class="business-services__head flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+						<h2 class="text-xl font-bold text-black">Usługi</h2>
+
+						<div class="business-services__search w-full sm:w-[340px]">
+							<label class="sr-only" for="serviceSearch">Szukaj usług</label>
+							<div class="flex items-center gap-2 bg-white rounded-2xl border border-black/10 px-3 py-2">
+								<i class="fa-solid fa-magnifying-glass text-[var(--c-secondary)]"></i>
+								<input id="serviceSearch" type="text" placeholder="Szukaj usług…" class="w-full outline-none text-sm bg-transparent text-[var(--c-primary)] placeholder:text-[var(--c-secondary)]">
+							</div>
+						</div>
+					</div>
+
+					<div class="business-services__list mt-4 flex flex-col">
+						{% for s in services %}
+							<div class="business-service flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 py-5 {% if not loop.last %}border-b border-black/10{% endif %}">
+								<div class="business-service__left flex flex-col gap-2 sm:pr-4">
+									<h3 class="font-bold text-[var(--c-primary)] text-lg leading-tight">{{ s.name }}</h3>
+									<p class="text-[var(--c-secondary)] leading-relaxed max-w-[600px]">{{ s.desc }}</p>
+
+									{% if s.images is not empty %}
+										<div class="business-service__imgs mt-2 flex items-center gap-2 flex-wrap">
+											{% for img in s.images %}
+												<button type="button" class="business-lightbox-trigger" data-lightbox-src="{{ img }}">
+													<img src="{{ img }}" alt="{{ s.name }} - zdjęcie {{ loop.index }}" class="w-14 h-14 rounded-md object-cover border border-black/10">
+												</button>
+											{% endfor %}
+										</div>
+									{% endif %}
+								</div>
+
+								<div class="business-service__right flex items-stretch justify-between sm:justify-end gap-4 sm:gap-7 sm:min-w-[260px]">
+									<div class="business-service__price flex flex-col justify-center text-right">
+										<div class="text-[var(--c-primary)] font-black text-lg">{{ s.price }} zł</div>
+										<div class="text-[var(--c-secondary)] font-semibold">{{ s.duration }}</div>
+									</div>
+
+									<div class="business-service__cta flex items-center">
+										<button type="button" class="business-service__btn inline-flex items-center justify-center px-5 py-3 rounded-2xl font-black text-white bg-[var(--c-cta)] hover:bg-[var(--c-cta-hover)] transition" data-booking-open data-service-id="{{ s.id }}" data-service-name="{{ s.name }}" data-service-price="{{ s.price }}" data-service-duration="{{ s.duration }}" data-service-duration-minutes="{{ s.duration_minutes }}">Umów</button>
+									</div>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				</article>
+
+				<article class="business-safety card p-4 sm:p-5">
+					<h2 class="text-xl font-bold text-[var(--c-primary)]">Zasady bezpieczeństwa</h2>
+
+					<div class="business-safety__list mt-6 flex flex-wrap">
+						{% for item in safetyRules %}
+							<div class="business-safety__item w-1/2 sm:w-1/2 md:w-1/2 pr-3 pb-3">
+								<div class="flex items-start gap-3 rounded bg-white border border-black/10 px-4 py-3">
+									<i class="{{ item.icon }} text-[var(--c-secondary)] mt-1"></i>
+									<span class="font-normal text-[var(--c-primary)] leading-snug">{{ item.label }}</span>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				</article>
+
+				<article class="business-amenities card p-4 sm:p-5">
+					<h2 class="text-xl font-bold text-[var(--c-primary)]">Udogodnienia</h2>
+
+					<div class="business-amenities__list mt-6 flex flex-wrap">
+						{% for item in amenities %}
+							<div class="business-amenities__item w-1/2 sm:w-1/2 md:w-1/2 pr-3 pb-3">
+								<div class="flex items-start gap-3 rounded bg-white border border-black/10 px-4 py-3">
+									<i class="{{ item.icon }} text-[var(--c-secondary)] mt-1"></i>
+									<span class="font-normal text-[var(--c-primary)] leading-snug">{{ item.label }}</span>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				</article>
+
+				<article class="business-reviews card p-4 sm:p-5">
+					<div class="business-reviews__head flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+						<div class="business-reviews__intro">
+							<h2 class="text-xl font-bold text-[var(--c-primary)]">Opinie</h2>
+							<p class="mt-1 text-[var(--c-secondary)] leading-relaxed">
+								Opinie pochodzą od klientów, którzy zarezerwowali wizytę.<br>Dzięki temu wiesz, czego się spodziewać.
+							</p>
+						</div>
+
+						<div class="business-reviews__summary rounded-2xl bg-white border border-black/10 px-4 py-4 min-w-[220px]">
+							<div class="flex items-start flex-col">
+								<div>
+									<div class="text-3xl font-black text-[var(--c-primary)] leading-none">{{ reviewsSummary.rating|number_format(1, '.', '') }}</div>
+									<div class="text-sm text-[var(--c-secondary)] font-semibold mt-1">na podstawie {{ reviewsSummary.count }} opinii</div>
+								</div>
+								<div class="text-amber-500 font-black tracking-[2px] mt-1 text-lg">
+									{% for i in 1..5 %}<i class="fa-solid fa-star"></i>{% endfor %}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="business-reviews__list mt-0 flex flex-col">
+						{% for r in reviews %}
+							<div class="business-review py-5 {% if not loop.last %}border-b border-black/10{% endif %}">
+								<div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+									<div class="business-review__left">
+										<div class="text-amber-500 font-black tracking-[2px]">
+											{% for i in 1..r.rating %}<i class="fa-solid fa-star"></i>{% endfor %}
+										</div>
+
+										<div class="mt-2 flex flex-col gap-1">
+											<div class="font-extrabold py-3">
+												{{ r.service }}
+												<span class="font-semibold">- {{ r.staff }}</span>
+											</div>
+
+											<div class="flex items-center gap-2">
+												<span class="font-semibold">{{ r.author }}</span>
+												<span class="opacity-60"> - </span>
+												<span>{{ r.date }}</span>
+
+												{% if r.verified %}
+													<span class="inline-flex items-center gap-2 ml-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 font-normal text-xs border border-emerald-200">
+														<i class="fa-solid fa-circle-check"></i>
+														Zweryfikowana
+													</span>
+												{% endif %}
+											</div>
+										</div>
+
+										<p class="mt-3 text-[var(--c-primary)] leading-relaxed max-w-[85ch]">{{ r.comment }}</p>
+									</div>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				</article>
+			</section>
+
+			<aside class="order-2 w-full lg:w-1/3 shrink-0 flex flex-col gap-6">
+				<article class="business-aside-map card p-4 sm:p-5">
+					<div class="business-aside-map__wrap relative overflow-hidden rounded-md border border-black/10">
+						<iframe class="w-full h-[220px]" referrerpolicy="no-referrer-when-downgrade" src="https://www.openstreetmap.org/export/embed.html?bbox={{ (map.lng - 0.01)|number_format(6,'.','') }},{{ (map.lat - 0.007)|number_format(6,'.','') }},{{ (map.lng + 0.01)|number_format(6,'.','') }},{{ (map.lat + 0.007)|number_format(6,'.','') }}&layer=mapnik&marker={{ map.lat|number_format(6,'.','') }},{{ map.lng|number_format(6,'.','') }}"></iframe>
+
+						<div class="business-aside-map__overlay absolute left-3 right-3 bottom-3 rounded-2xl bg-white/95 backdrop-blur border border-black/10 px-3 py-3">
+							<div class="flex items-center gap-3">
+								<img src="{{ business.featured_image }}" alt="{{ business.name }}" class="w-12 h-12 rounded-full object-cover border border-black/10">
+								<div class="flex-1 min-w-0">
+									<div class="font-black text-[var(--c-primary)] leading-tight truncate">{{ business.name }}</div>
+									<div class="text-xs text-[var(--c-secondary)] font-semibold truncate">{{ business.address_line }}, {{ business.city }}</div>
+								</div>
+								<a href="#" class="business-aside-map__contact w-10 h-10 rounded-full bg-[var(--c-cta)] hover:bg-[var(--c-cta-hover)] transition inline-flex items-center justify-center text-white">
+									<i class="fa-solid fa-envelope"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+				</article>
+
+				<article class="business-aside-about card p-4 sm:p-5">
+					<h3 class="text-xl font-bold z-header-services">O nas</h3>
+					<p class="mt-2 leading-relaxed">{{ about }}</p>
+				</article>
+
+				<article class="business-aside-staff card p-4 sm:p-5">
+					<div class="flex items-center justify-between">
+						<h3 class="text-xl font-bold z-header-services">Pracownicy</h3>
+					</div>
+
+					<div class="swiper business-staff-swiper mt-4">
+						<div class="swiper-wrapper">
+							{% for person in staff %}
+								<div class="swiper-slide">
+									<div class="business-staff__item flex flex-col items-center text-center">
+										<img src="{{ person.avatar }}" alt="{{ person.name }}" class="w-16 h-16 rounded-full object-cover border border-black/10">
+										<div class="mt-2 font-normal leading-tight">{{ person.name }}</div>
+									</div>
+								</div>
+							{% endfor %}
+						</div>
+					</div>
+				</article>
+
+				<article class="business-aside-hours card p-4 sm:p-5">
+					<h3 class="text-xl font-bold z-header-services">Godziny otwarcia</h3>
+
+					<div class="mt-3 flex flex-col">
+						{% for row in openingHours %}
+							{% set isToday = (loop.index0 == todayIndex) %}
+							<div class="business-hours__row flex items-center justify-between gap-4 py-2 px-3 rounded-xl {% if isToday %}bg-[rgba(255,71,87,0.10)] border border-[rgba(255,71,87,0.25)]{% endif %}">
+								<span class="font-bold text-[var(--c-primary)]">{{ row.day }}</span>
+								<span class="font-bold {% if isToday %}text-[var(--c-primary)]{% else %}text-[var(--c-secondary)]{% endif %}">{{ row.hours }}</span>
+							</div>
+						{% endfor %}
+					</div>
+				</article>
+
+				<article class="business-aside-social card p-4 sm:p-5">
+					<h3 class="text-xl font-bold z-header-services">Media społecznościowe</h3>
+
+					<div class="mt-4 flex items-center justify-center gap-3">
+						<a href="{{ socials.instagram }}" target="_blank" rel="noopener" class="business-social__btn">
+							<i class="fa-brands fa-instagram"></i>
+						</a>
+
+						<a href="{{ socials.facebook }}" target="_blank" rel="noopener" class="business-social__btn">
+							<i class="fa-brands fa-facebook-f"></i>
+						</a>
+					</div>
+				</article>
+			</aside>
+		</div>
+	</div>
+
+	<div id="businessLightbox" class="business-lightbox">
+		<div class="business-lightbox__overlay" data-lightbox-close></div>
+
+		<div class="business-lightbox__dialog">
+			<button type="button" class="business-lightbox__close" data-lightbox-close>
+				<i class="fa-solid fa-xmark"></i>
+			</button>
+
+			<img id="businessLightboxImg" class="business-lightbox__img" alt="Podgląd zdjęcia" src="">
+		</div>
+	</div>
+</main>
+
+{% include 'partials/booking-modal.html.twig' %}
+
+{% endblock %}
+
+{% block custom_scripts %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script defer>
+(() => {
+	function initStaffSwiperAside() {
+		const el = document.querySelector('.business-staff-swiper');
+		if (!el || typeof Swiper === 'undefined') return;
+
+		new Swiper(el, {
+			slidesPerView: 2.2,
+			spaceBetween: 12,
+			breakpoints: {
+				420: { slidesPerView: 2.6 },
+				640: { slidesPerView: 3.2 },
+				1024: { slidesPerView: 3.0 }
+			}
+		});
+	}
+
+	function initBookingStaffSwiper() {
+		const el = document.querySelector('.booking-staff-swiper');
+		if (!el || typeof Swiper === 'undefined') return;
+
+		new Swiper(el, {
+			slidesPerView: 2.4,
+			spaceBetween: 10,
+			breakpoints: {
+				420: { slidesPerView: 3.2 },
+				640: { slidesPerView: 4.2 },
+				1024: { slidesPerView: 3.4 }
+			}
+		});
+	}
+
+	function initLightbox() {
+		const modal = document.getElementById('businessLightbox');
+		const imgEl = document.getElementById('businessLightboxImg');
+		if (!modal || !imgEl) return;
+
+		const open = (src) => {
+			imgEl.src = src;
+			modal.classList.add('is-open');
+		};
+
+		const close = () => {
+			modal.classList.remove('is-open');
+			imgEl.src = '';
+		};
+
+		document.querySelectorAll('.business-lightbox-trigger').forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const src = btn.getAttribute('data-lightbox-src');
+				if (src) open(src);
+			});
+		});
+
+		modal.querySelectorAll('[data-lightbox-close]').forEach((el) => {
+			el.addEventListener('click', close);
+		});
+
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape' && modal.classList.contains('is-open')) close();
+		});
+	}
+
+	function initBookingModal() {
+		const overlay = document.getElementById('bookingOverlay');
+		if (!overlay) return;
+
+		const stepEls = overlay.querySelectorAll('[data-step]');
+		const nextBtn = overlay.querySelector('[data-booking-next]');
+		const backBtn = overlay.querySelector('[data-booking-back]');
+		const payBtn = overlay.querySelector('[data-booking-pay]');
+		const payLoading = overlay.querySelector('[data-pay-loading]');
+
+		const dateInput = overlay.querySelector('#bookingDate');
+		const selectedTimeEl = overlay.querySelector('[data-selected-time]');
+		const selectedStaffEl = overlay.querySelector('[data-selected-staff]');
+
+		const summaryName = overlay.querySelector('[data-summary-service-name]');
+		const summaryDur = overlay.querySelector('[data-summary-service-duration]');
+		const summaryPrice = overlay.querySelector('[data-summary-service-price]');
+		const summaryTotal = overlay.querySelector('[data-summary-total]');
+
+		const confirmService = overlay.querySelector('[data-confirm-service]');
+		const confirmStaff = overlay.querySelector('[data-confirm-staff]');
+		const confirmDatetime = overlay.querySelector('[data-confirm-datetime]');
+		const confirmTotal = overlay.querySelector('[data-confirm-total]');
+
+		const doneService = overlay.querySelector('[data-done-service]');
+		const doneStaff = overlay.querySelector('[data-done-staff]');
+		const doneDatetime = overlay.querySelector('[data-done-datetime]');
+		const doneTotal = overlay.querySelector('[data-done-total]');
+
+		const timeCols = {
+			morning: overlay.querySelector('[data-times-col="morning"]'),
+			afternoon: overlay.querySelector('[data-times-col="afternoon"]'),
+			evening: overlay.querySelector('[data-times-col="evening"]')
+		};
+
+		const availabilityByDate = {{ bookingAvailability|json_encode|raw }};
+		const staffServices = {{ staffServices|json_encode|raw }};
+
+		let fp = null;
+
+		const state = {
+			step: 1,
+			service: null,
+			staff: null,
+			date: null,
+			time: null
+		};
+
+		function setStep(n) {
+			state.step = n;
+			stepEls.forEach(el => el.classList.toggle('is-active', Number(el.getAttribute('data-step')) === n));
+		}
+
+		function open() {
+			overlay.classList.add('is-open');
+			document.body.classList.add('is-booking-open');
+			setStep(1);
+		}
+
+		function close() {
+			overlay.classList.remove('is-open');
+			document.body.classList.remove('is-booking-open');
+			resetStep1Selections();
+		}
+
+		function resetStep1Selections() {
+			state.staff = null;
+			state.date = null;
+			state.time = null;
+
+			selectedTimeEl.textContent = '—';
+			selectedStaffEl.textContent = 'Wybrano: —';
+
+			overlay.querySelectorAll('.booking-staff__item').forEach(b => b.classList.remove('is-selected'));
+			overlay.querySelectorAll('.booking-time__btn').forEach(b => b.classList.remove('is-selected'));
+
+			if (nextBtn) nextBtn.disabled = true;
+		}
+
+		function formatPrice(value) {
+			const n = Number(value);
+			if (Number.isNaN(n)) return '—';
+			return `${n.toFixed(2).replace('.', ',')} zł`;
+		}
+
+		function updateSummary() {
+			if (!state.service) return;
+
+			summaryName.textContent = state.service.name;
+			summaryDur.textContent = state.service.duration;
+			summaryPrice.textContent = formatPrice(state.service.price);
+			summaryTotal.textContent = formatPrice(state.service.price);
+
+			confirmService.textContent = state.service.name;
+			confirmTotal.textContent = summaryTotal.textContent;
+			doneService.textContent = state.service.name;
+			doneTotal.textContent = summaryTotal.textContent;
+
+			const staffLabel = state.staff ? state.staff.name : '—';
+			confirmStaff.textContent = staffLabel;
+			doneStaff.textContent = staffLabel;
+
+			const dt = (state.date && state.time) ? `${state.date} ${state.time}` : '—';
+			confirmDatetime.textContent = dt;
+			doneDatetime.textContent = dt;
+		}
+
+		function canGoNext() {
+			return Boolean(state.date && state.time && state.staff);
+		}
+
+		function updateNextState() {
+			if (!nextBtn) return;
+			nextBtn.disabled = !canGoNext();
+		}
+
+		function uniqSorted(arr) {
+			return Array.from(new Set(arr)).sort((a, b) => a.localeCompare(b));
+		}
+
+		function getEligibleStaffIdsForService(serviceId) {
+			const sid = Number(serviceId);
+			return Object.entries(staffServices)
+				.filter(([staffId, services]) => Array.isArray(services) && services.includes(sid))
+				.map(([staffId]) => Number(staffId));
+		}
+
+		function dateHasAnySlotsForService(dateStr, serviceId) {
+			const day = availabilityByDate?.[dateStr];
+			if (!day || !day.staff) return false;
+
+			const eligibleStaff = getEligibleStaffIdsForService(serviceId);
+			return eligibleStaff.some(staffId => Array.isArray(day.staff[staffId]) && day.staff[staffId].length > 0);
+		}
+
+		function updateStaffEligibility() {
+			if (!state.service) return;
+
+			const eligible = new Set(getEligibleStaffIdsForService(state.service.id));
+
+			overlay.querySelectorAll('.booking-staff__item').forEach((btn) => {
+				const staffIdRaw = btn.getAttribute('data-staff-id');
+
+				if (staffIdRaw === 'any') {
+					btn.disabled = false;
+					btn.classList.remove('is-disabled');
+					return;
+				}
+
+				const staffId = Number(staffIdRaw);
+				const ok = eligible.has(staffId);
+
+				btn.disabled = !ok;
+				btn.classList.toggle('is-disabled', !ok);
+
+				if (!ok && state.staff && String(state.staff.id) === String(staffId)) {
+					state.staff = null;
+					selectedStaffEl.textContent = 'Wybrano: —';
+				}
+			});
+		}
+
+		function destroyCalendar() {
+			if (fp) {
+				fp.destroy();
+				fp = null;
+			}
+		}
+
+		function initCalendarForService(serviceId) {
+			if (!dateInput || typeof flatpickr === 'undefined') return;
+
+			destroyCalendar();
+
+			fp = flatpickr(dateInput, {
+				inline: true,
+				dateFormat: 'Y-m-d',
+				minDate: 'today',
+				enable: [
+					function (date) {
+						const ds = date.toISOString().slice(0, 10);
+						return dateHasAnySlotsForService(ds, serviceId);
+					}
+				],
+				onDayCreate: function (dObj, dStr, fpInst, dayElem) {
+					const ds = dayElem.dateObj.toISOString().slice(0, 10);
+					if (dateHasAnySlotsForService(ds, serviceId)) {
+						dayElem.classList.add('is-available-day');
+					} else {
+						dayElem.classList.add('is-unavailable-day');
+					}
+				},
+				onChange: function (selectedDates, dateStr) {
+					state.date = dateStr || null;
+					state.time = null;
+
+					selectedTimeEl.textContent = '—';
+					overlay.querySelectorAll('.booking-time__btn').forEach(b => b.classList.remove('is-selected'));
+
+					renderTimes();
+					updateNextState();
+					updateSummary();
+				}
+			});
+		}
+
+		function getTimesForCurrentSelection() {
+			if (!state.date || !state.service) return [];
+
+			const day = availabilityByDate?.[state.date];
+			if (!day || !day.staff) return [];
+
+			const eligibleStaffIds = getEligibleStaffIdsForService(state.service.id);
+
+			if (state.staff && state.staff.id !== 'any') {
+				const staffId = Number(state.staff.id);
+				if (!eligibleStaffIds.includes(staffId)) return [];
+				return Array.isArray(day.staff[staffId]) ? day.staff[staffId] : [];
+			}
+
+			const all = [];
+			eligibleStaffIds.forEach((sid) => {
+				const t = day.staff[sid];
+				if (Array.isArray(t)) all.push(...t);
+			});
+
+			return uniqSorted(all);
+		}
+
+		function renderTimes() {
+			Object.values(timeCols).forEach(el => el.innerHTML = '');
+
+			if (!state.date) return;
+
+			const times = getTimesForCurrentSelection();
+
+			if (!times.length) {
+				Object.values(timeCols).forEach(col => {
+					const empty = document.createElement('div');
+					empty.className = 'booking-times__empty';
+					empty.textContent = 'Brak dostępnych godzin';
+					col.appendChild(empty);
+				});
+				return;
+			}
+
+			const groups = { morning: [], afternoon: [], evening: [] };
+			times.forEach(t => {
+				const hh = Number(t.slice(0, 2));
+				if (hh < 12) groups.morning.push(t);
+				else if (hh < 17) groups.afternoon.push(t);
+				else groups.evening.push(t);
+			});
+
+			Object.entries(groups).forEach(([key, list]) => {
+				list.forEach((t) => {
+					const btn = document.createElement('button');
+					btn.type = 'button';
+					btn.className = 'booking-time__btn';
+					btn.textContent = t;
+
+					btn.addEventListener('click', () => {
+						overlay.querySelectorAll('.booking-time__btn').forEach(b => b.classList.remove('is-selected'));
+						btn.classList.add('is-selected');
+
+						state.time = t;
+						selectedTimeEl.textContent = t;
+
+						updateNextState();
+						updateSummary();
+					});
+
+					timeCols[key].appendChild(btn);
+				});
+			});
+		}
+
+		document.querySelectorAll('[data-booking-open]').forEach((btn) => {
+			btn.addEventListener('click', () => {
+				state.service = {
+					id: btn.getAttribute('data-service-id'),
+					name: btn.getAttribute('data-service-name'),
+					price: btn.getAttribute('data-service-price'),
+					duration: btn.getAttribute('data-service-duration'),
+					durationMinutes: btn.getAttribute('data-service-duration-minutes')
+				};
+
+				updateSummary();
+				resetStep1Selections();
+				updateStaffEligibility();
+				initCalendarForService(state.service.id);
+				renderTimes();
+				open();
+			});
+		});
+
+		overlay.querySelectorAll('[data-booking-close]').forEach((el) => el.addEventListener('click', close));
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape' && overlay.classList.contains('is-open')) close();
+		});
+
+		overlay.querySelectorAll('.booking-staff__item').forEach((btn) => {
+			btn.addEventListener('click', () => {
+				if (btn.disabled) return;
+
+				overlay.querySelectorAll('.booking-staff__item').forEach(b => b.classList.remove('is-selected'));
+				btn.classList.add('is-selected');
+
+				state.staff = {
+					id: btn.getAttribute('data-staff-id'),
+					name: btn.getAttribute('data-staff-name')
+				};
+
+				selectedStaffEl.textContent = `Wybrano: ${state.staff.name}`;
+
+				state.time = null;
+				selectedTimeEl.textContent = '—';
+				renderTimes();
+				updateNextState();
+				updateSummary();
+			});
+		});
+
+		if (nextBtn) {
+			nextBtn.addEventListener('click', () => {
+				if (!canGoNext()) return;
+				updateSummary();
+				setStep(2);
+			});
+		}
+
+		if (backBtn) {
+			backBtn.addEventListener('click', () => setStep(1));
+		}
+
+		if (payBtn) {
+			payBtn.addEventListener('click', () => {
+				payBtn.disabled = true;
+				if (payLoading) {
+					payLoading.classList.remove('hidden');
+					payLoading.classList.add('flex');
+				}
+
+				setTimeout(() => {
+					if (payLoading) {
+						payLoading.classList.add('hidden');
+						payLoading.classList.remove('flex');
+					}
+					payBtn.disabled = false;
+					setStep(3);
+				}, 1200);
+			});
+		}
+
+		initBookingStaffSwiper();
+	}
+
+	window.addEventListener('DOMContentLoaded', function () {
+		initStaffSwiperAside();
+		initLightbox();
+		initBookingModal();
+	});
+})();
+</script>
+{% endblock %}
