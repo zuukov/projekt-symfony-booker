@@ -23,12 +23,7 @@ cd projekt-symfony-booker
 composer install
 ```
 
-### 3. Utwórz bazę danych
-```bash
-php bin/console doctrine:schema:create
-```
-
-### 4. Uruchom serwer deweloperski
+### 3. Uruchom serwer deweloperski
 ```bash
 symfony server:start
 ```
@@ -38,15 +33,15 @@ Aplikacja będzie dostępna pod adresem: `http://localhost:8000`
 
 ## Funkcjonalności
 
-- ✅ **Zarządzanie firmami** - tworzenie profili biznesowych z godzinami pracy
-- ✅ **Usługi** - definiowanie usług z cenami, czasem trwania i zdjęciami
-- ✅ **Personel** - zarządzanie pracownikami, ich umiejętnościami i dostępnością
-- ✅ **Rezerwacje** - system bookingu z wyborem usługi, pracownika i terminu
-- ✅ **Opinie** - recenzje klientów z ocenami gwiazdkowymi
-- ✅ **Wyszukiwanie** - wyszukiwanie firm po kategorii, lokalizacji i nazwie
-- ✅ **Geokodowanie** - automatyczna mapa z lokalizacją firmy (OpenStreetMap)
-- ✅ **Zasady bezpieczeństwa i udogodnienia** - 40 predefiniowanych opcji dla firm
-- ✅ **Role użytkowników** - admin, właściciel firmy, klient
+- **Zarządzanie firmami** - tworzenie profili biznesowych z godzinami pracy
+- **Usługi** - definiowanie usług z cenami, czasem trwania i zdjęciami
+- **Personel** - zarządzanie pracownikami, ich umiejętnościami i dostępnością
+- **Rezerwacje** - system bookingu z wyborem usługi, pracownika i terminu
+- **Opinie** - recenzje klientów z ocenami gwiazdkowymi
+- **Wyszukiwanie** - wyszukiwanie firm po kategorii, lokalizacji i nazwie
+- **Geokodowanie** - automatyczna mapa z lokalizacją firmy (OpenStreetMap)
+- **Zasady bezpieczeństwa i udogodnienia** - 40 predefiniowanych opcji dla firm
+- **Role użytkowników** - admin, właściciel firmy, klient
 
 
 ## Baza danych
