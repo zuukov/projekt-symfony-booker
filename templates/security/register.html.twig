@@ -407,10 +407,15 @@
       let typKonta = "{{ typ_konta|default('uzytkownik')|e('js') }}".toLowerCase();
       if (typKonta !== 'uzytkownik' && typKonta !== 'biznes') typKonta = 'uzytkownik';
 
-      if (radios.length >= 2) {
+      // Sprawdź czy formularz ma już zaznaczone pole (po błędzie walidacji)
+      const alreadyChecked = Array.from(radios).find(r => r.checked);
+      
+      if (!alreadyChecked && radios.length >= 2) {
+        // Tylko jeśli nic nie jest zaznaczone, ustaw na podstawie typ_konta
         radios[1].checked = (typKonta === 'biznes');
         radios[0].checked = (typKonta !== 'biznes');
       }
+      
       radios.forEach(r => r.addEventListener('change', toggleBusinessUI));
       toggleBusinessUI();
 

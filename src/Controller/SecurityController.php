@@ -96,7 +96,17 @@ class SecurityController extends AbstractController
             }
 
             $this->entityManager->persist($user);
-            $this->entityManager->flush();
+            
+            try {
+                $this->entityManager->flush();
+            } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
+                $form->get('email')->addError(new \Symfony\Component\Form\FormError('Ten adres email jest już zarejestrowany. Użyj innego adresu.'));
+                
+                return $this->render('security/register.html.twig', [
+                    'registrationForm' => $form->createView(),
+                    'typ_konta' => $typ_konta,
+                ]);
+            }
 
             $this->addFlash('success', 'Rejestracja zakończona pomyślnie! Możesz się teraz zalogować.');
 
