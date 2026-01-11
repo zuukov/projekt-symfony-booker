@@ -116,7 +116,7 @@
                                             <label class="text-sm text-gray-600">Zamknięte:</label>
                                             {{ form_widget(hours.closesAt) }}
                                         </div>
-                                        {{ form_widget(hours.weekday) }}
+                                        <div style="display: none;">{{ form_widget(hours.weekday) }}</div>
                                     </div>
                                     {{ form_errors(hours) }}
                                 {% endfor %}

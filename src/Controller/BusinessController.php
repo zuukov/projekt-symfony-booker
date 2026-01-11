@@ -4,6 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Business;
 use App\Repository\BusinessRepository;
+use App\Repository\ServiceRepository;
+use App\Repository\StaffRepository;
+use App\Repository\ReviewRepository;
+use App\Repository\StaffServiceRepository;
+use App\Service\GeocodingService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -12,6 +17,11 @@ final class BusinessController extends AbstractController
 {
     public function __construct(
         private BusinessRepository $businessRepository,
+        private ServiceRepository $serviceRepository,
+        private StaffRepository $staffRepository,
+        private ReviewRepository $reviewRepository,
+        private StaffServiceRepository $staffServiceRepository,
+        private GeocodingService $geocodingService,
     ) {}
 
     #[Route('/firma/{id}', name: 'business_index', requirements: ['id' => '\d+'])]
@@ -49,46 +59,75 @@ final class BusinessController extends AbstractController
             'postcode' => $businessEntity->getPostalCode(),
             'country' => 'Polska',
             'rating' => 5.0, // TODO: Calculate from reviews
-            'reviews_count' => 178, // TODO: Count reviews
+            'reviews_count' => count($businessEntity->getReviews()), // Real count
             'featured_image' => $businessEntity->getLogoUrl() ?? 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=1800&q=80',
+            'email' => $businessEntity->getEmail(),
         ];
 
-        $services = [
-            [
-                'id' => 101,
-                'name' => 'Strzyżenie męskie',
-                'desc' => 'Klasyczne strzyżenie z dopasowaniem do kształtu twarzy i stylu.',
-                'price' => 60.00,
-                'duration' => '45 min',
-                'duration_minutes' => 45,
-                'images' => [
-                    'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=400&q=80',
-                    'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=400&q=80',
-                ],
-            ],
-            [
-                'id' => 102,
-                'name' => 'Broda / konturowanie',
-                'desc' => 'Precyzyjne kontury, trymowanie i pielęgnacja brody kosmetykami premium.',
-                'price' => 45.00,
-                'duration' => '30 min',
-                'duration_minutes' => 30,
-                'images' => [
-                    'https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=400&q=80',
-                ],
-            ],
-            [
-                'id' => 103,
-                'name' => 'Pakiet: włosy + broda',
-                'desc' => 'Kompletna usługa — strzyżenie + broda w jednej wizycie.',
-                'price' => 95.00,
-                'duration' => '75 min',
-                'duration_minutes' => 75,
-                'images' => [
-                    'https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=400&q=80',
-                ],
-            ],
+        // Get real services from database
+        $serviceEntities = $this->serviceRepository->findBy(['business' => $businessEntity, 'isActive' => true]);
+        $services = [];
+        foreach ($serviceEntities as $serviceEntity) {
+            $services[] = [
+                'id' => $serviceEntity->getId(),
+                'name' => $serviceEntity->getName(),
+                'desc' => $serviceEntity->getDescription() ?? '',
+                'price' => $serviceEntity->getPrice(),
+                'duration' => $serviceEntity->getDurationMinutes() . ' min',
+                'duration_minutes' => $serviceEntity->getDurationMinutes(),
+                'images' => $serviceEntity->getFeaturedImage() ? [$serviceEntity->getFeaturedImage()] : [],
+            ];
+        }
+
+        // Get real staff from database
+        $staffEntities = $this->staffRepository->findBy(['business' => $businessEntity]);
+        $staff = [];
+        foreach ($staffEntities as $staffEntity) {
+            $staff[] = [
+                'id' => $staffEntity->getId(),
+                'name' => $staffEntity->getName() . ' ' . $staffEntity->getSurname(),
+                'avatar' => $staffEntity->getAvatarImage() ?? 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=256&q=80',
+            ];
+        }
+
+        // Get real reviews from database
+        $reviewEntities = $this->reviewRepository->findBy(['business' => $businessEntity], ['createdAt' => 'DESC'], 10);
+        $reviews = [];
+        $totalRating = 0;
+        foreach ($reviewEntities as $reviewEntity) {
+            $reviews[] = [
+                'rating' => $reviewEntity->getRating(),
+                'service' => '', // TODO: Link review to service
+                'staff' => '', // TODO: Link review to staff
+                'author' => $reviewEntity->getUser()->getName() . ' ' . substr($reviewEntity->getUser()->getSurname(), 0, 1) . '.',
+                'date' => $reviewEntity->getCreatedAt()->format('Y-m-d'),
+                'verified' => true,
+                'comment' => $reviewEntity->getComment() ?? '',
+            ];
+            $totalRating += $reviewEntity->getRating();
+        }
+
+        $reviewsSummary = [
+            'rating' => !empty($reviews) ? round($totalRating / count($reviews), 1) : 0,
+            'count' => count($reviewEntities),
         ];
+
+        // Update business rating with calculated value
+        if (!empty($reviews)) {
+            $business['rating'] = $reviewsSummary['rating'];
+        }
+
+        // Build staff-services mapping
+        $staffServices = [];
+        $staffServiceEntities = $this->staffServiceRepository->findAll();
+        foreach ($staffServiceEntities as $ss) {
+            $staffId = $ss->getStaff()->getId();
+            $serviceId = $ss->getService()->getId();
+            if (!isset($staffServices[$staffId])) {
+                $staffServices[$staffId] = [];
+            }
+            $staffServices[$staffId][] = $serviceId;
+        }
 
 
         $safetyRules = [
@@ -107,81 +146,21 @@ final class BusinessController extends AbstractController
             ['label' => 'Przyjazne dla dzieci', 'icon' => 'fa-solid fa-child-reaching'],
         ];
 
-        $reviewsSummary = [
-            'rating' => 5.0,
-            'count' => 178,
-        ];
-
-        $reviews = [
-            [
-                'rating' => 5,
-                'service' => 'Strzyżenie męskie',
-                'staff' => 'Kuba',
-                'author' => 'Sonia',
-                'date' => '2026-01-05',
-                'verified' => true,
-                'comment' => 'Super klimat i bardzo dokładne cięcie. Na pewno wrócę!',
-            ],
-            [
-                'rating' => 5,
-                'service' => 'Pakiet: włosy + broda',
-                'staff' => 'Mateusz',
-                'author' => 'Michał',
-                'date' => '2026-01-02',
-                'verified' => true,
-                'comment' => 'Perfekcyjne kontury brody, pełen profesjonalizm.',
-            ],
-            [
-                'rating' => 5,
-                'service' => 'Golenie brzytwą',
-                'staff' => 'Kuba',
-                'author' => 'Bartek',
-                'date' => '2025-12-28',
-                'verified' => true,
-                'comment' => 'Rytuał golenia top. Skóra jak nowa.',
-            ],
-        ];
-
-        $staff = [
-            [
-                'id' => 201,
-                'name' => 'Kuba Nowak',
-                'avatar' => 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=256&q=80',
-                'is_any' => true
-            ],
-            [
-                'id' => 202,
-                'name' => 'Mateusz Krawiec',
-                'avatar' => 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=256&q=80',
-            ],
-            [
-                'id' => 203,
-                'name' => 'Ola Wiśniewska',
-                'avatar' => 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=256&q=80',
-            ],
-            [
-                'id' => 204,
-                'name' => 'Ala Wiśniewska',
-                'avatar' => 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=256&q=80',
-            ],
-            [
-                'id' => 205,
-                'name' => 'Kasia Wiśniewska',
-                'avatar' => 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=256&q=80',
-            ],
-        ];
-
-        $staffServices = [
-            201 => [101, 102, 103],
-            202 => [101, 103],
-            203 => [102],
-        ];
-
         $todayIndex = (int) date('N') - 1;
 
+        // Geocode address for map
+        $fullAddress = sprintf(
+            '%s, %s %s, Poland',
+            $businessEntity->getAddress(),
+            $businessEntity->getPostalCode(),
+            $businessEntity->getCity()
+        );
+        
+        $coordinates = $this->geocodingService->geocodeAddress($fullAddress);
+        
         $map = [
-            'lat' => 51.585,
-            'lng' => 14.969,
+            'lat' => $coordinates['lat'] ?? 52.406376, // Default to Poland center
+            'lng' => $coordinates['lng'] ?? 16.925167,
             'zoom' => 15,
         ];
 
