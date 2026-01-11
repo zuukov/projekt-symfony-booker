@@ -194,7 +194,7 @@
 			<aside class="order-2 w-full lg:w-1/3 shrink-0 flex flex-col gap-6">
 				<article class="business-aside-map card p-4 sm:p-5">
 					<div class="business-aside-map__wrap relative overflow-hidden rounded-md border border-black/10">
-						<iframe class="w-full h-[220px]" referrerpolicy="no-referrer-when-downgrade" src="https://www.openstreetmap.org/export/embed.html?bbox={{ (map.lng - 0.01)|number_format(6,'.','') }},{{ (map.lat - 0.007)|number_format(6,'.','') }},{{ (map.lng + 0.01)|number_format(6,'.','') }},{{ (map.lat + 0.007)|number_format(6,'.','') }}&layer=mapnik&marker={{ map.lat|number_format(6,'.','') }},{{ map.lng|number_format(6,'.','') }}"></iframe>
+						<iframe class="w-full h-[220px]" referrerpolicy="no-referrer-when-downgrade" src="https://www.openstreetmap.org/export/embed.html?bbox={{ (map.lng - 0.005)|number_format(6,'.','') }},{{ (map.lat - 0.0035)|number_format(6,'.','') }},{{ (map.lng + 0.005)|number_format(6,'.','') }},{{ (map.lat + 0.0035)|number_format(6,'.','') }}&layer=mapnik&marker={{ map.lat|number_format(6,'.','') }},{{ map.lng|number_format(6,'.','') }}"></iframe>
 
 						<div class="business-aside-map__overlay absolute left-3 right-3 bottom-3 rounded-2xl bg-white/95 backdrop-blur border border-black/10 px-3 py-3">
 							<div class="flex items-center gap-3">
