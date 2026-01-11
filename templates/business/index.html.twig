@@ -315,12 +315,10 @@
 
 <script defer>
 (() => {
-	// Copy phone number to clipboard
 	window.copyPhoneToClipboard = function(phone, event) {
 		const btn = event ? event.currentTarget : null;
 		
 		navigator.clipboard.writeText(phone).then(() => {
-			// Show temporary notification on button
 			if (btn) {
 				const originalHTML = btn.innerHTML;
 				btn.innerHTML = '<i class="fa-solid fa-check"></i>';
@@ -334,7 +332,6 @@
 			alert('Numer telefonu skopiowany!');
 		}).catch(err => {
 			console.error('Failed to copy phone number:', err);
-			// Fallback method for older browsers
 			const textArea = document.createElement('textarea');
 			textArea.value = phone;
 			textArea.style.position = 'fixed';

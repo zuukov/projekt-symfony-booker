@@ -28,7 +28,7 @@ class BusinessFormType extends AbstractType
                     new Assert\NotBlank(),
                     new Assert\Length(max: 255),
                 ],
-                'disabled' => $isEdit, // Make read-only when editing
+                'disabled' => $isEdit,
                 'attr' => [
                     'class' => 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500',
                 ],

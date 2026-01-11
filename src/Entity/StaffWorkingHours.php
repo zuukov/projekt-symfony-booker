@@ -62,7 +62,6 @@ class StaffWorkingHours
 
     public function setStartsAt(\DateTimeInterface $startsAt): static
     {
-        // Convert DateTimeImmutable to DateTime for Doctrine TimeType compatibility
         if ($startsAt instanceof \DateTimeImmutable) {
             $this->startsAt = \DateTime::createFromInterface($startsAt);
         } else {
@@ -79,7 +78,6 @@ class StaffWorkingHours
 
     public function setEndsAt(\DateTimeInterface $endsAt): static
     {
-        // Convert DateTimeImmutable to DateTime for Doctrine TimeType compatibility
         if ($endsAt instanceof \DateTimeImmutable) {
             $this->endsAt = \DateTime::createFromInterface($endsAt);
         } else {

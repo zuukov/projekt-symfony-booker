@@ -293,7 +293,6 @@ class Business
     public function removeService(Service $service): static
     {
         if ($this->services->removeElement($service)) {
-            // set the owning side to null (unless already changed)
             if ($service->getBusiness() === $this) {
                 $service->setBusiness(null);
             }
@@ -323,7 +322,6 @@ class Business
     public function removeStaff(Staff $staff): static
     {
         if ($this->staff->removeElement($staff)) {
-            // set the owning side to null (unless already changed)
             if ($staff->getBusiness() === $this) {
                 $staff->setBusiness(null);
             }
@@ -353,7 +351,6 @@ class Business
     public function removeBusinessWorkingHour(BusinessWorkingHours $businessWorkingHour): static
     {
         if ($this->businessWorkingHours->removeElement($businessWorkingHour)) {
-            // set the owning side to null (unless already changed)
             if ($businessWorkingHour->getBusiness() === $this) {
                 $businessWorkingHour->setBusiness(null);
             }
@@ -383,7 +380,6 @@ class Business
     public function removeBooking(Booking $booking): static
     {
         if ($this->bookings->removeElement($booking)) {
-            // set the owning side to null (unless already changed)
             if ($booking->getBusiness() === $this) {
                 $booking->setBusiness(null);
             }
@@ -413,7 +409,6 @@ class Business
     public function removeReview(Review $review): static
     {
         if ($this->reviews->removeElement($review)) {
-            // set the owning side to null (unless already changed)
             if ($review->getBusiness() === $this) {
                 $review->setBusiness(null);
             }

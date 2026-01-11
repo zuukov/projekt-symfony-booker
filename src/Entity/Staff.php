@@ -167,7 +167,6 @@ class Staff
     public function removeStaffService(StaffService $staffService): static
     {
         if ($this->staffServices->removeElement($staffService)) {
-            // set the owning side to null (unless already changed)
             if ($staffService->getStaff() === $this) {
                 $staffService->setStaff(null);
             }
@@ -197,7 +196,6 @@ class Staff
     public function removeStaffWorkingHour(StaffWorkingHours $staffWorkingHour): static
     {
         if ($this->staffWorkingHours->removeElement($staffWorkingHour)) {
-            // set the owning side to null (unless already changed)
             if ($staffWorkingHour->getStaff() === $this) {
                 $staffWorkingHour->setStaff(null);
             }
@@ -227,7 +225,6 @@ class Staff
     public function removeStaffTimeOff(StaffTimeOff $staffTimeOff): static
     {
         if ($this->staffTimeOffs->removeElement($staffTimeOff)) {
-            // set the owning side to null (unless already changed)
             if ($staffTimeOff->getStaff() === $this) {
                 $staffTimeOff->setStaff(null);
             }
@@ -257,7 +254,6 @@ class Staff
     public function removeBooking(Booking $booking): static
     {
         if ($this->bookings->removeElement($booking)) {
-            // set the owning side to null (unless already changed)
             if ($booking->getStaff() === $this) {
                 $booking->setStaff(null);
             }

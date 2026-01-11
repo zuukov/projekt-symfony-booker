@@ -27,7 +27,7 @@ class GeocodingService
                     'limit' => 1,
                 ],
                 'headers' => [
-                    'User-Agent' => 'Booker-App/1.0', // Required by Nominatim
+                    'User-Agent' => 'Booker-App/1.0',
                 ],
             ]);
 
@@ -44,7 +44,6 @@ class GeocodingService
                 'lng' => (float) $result['lon'],
             ];
         } catch (\Exception $e) {
-            // Log error or handle it appropriately
             return null;
         }
     }

@@ -149,7 +149,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeBusiness(Business $business): static
     {
         if ($this->businesses->removeElement($business)) {
-            // set the owning side to null (unless already changed)
             if ($business->getOwner() === $this) {
                 $business->setOwner(null);
             }
@@ -179,7 +178,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeBooking(Booking $booking): static
     {
         if ($this->bookings->removeElement($booking)) {
-            // set the owning side to null (unless already changed)
             if ($booking->getUser() === $this) {
                 $booking->setUser(null);
             }
@@ -209,7 +207,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeReview(Review $review): static
     {
         if ($this->reviews->removeElement($review)) {
-            // set the owning side to null (unless already changed)
             if ($review->getUser() === $this) {
                 $review->setUser(null);
             }

@@ -94,7 +94,6 @@ class ServiceCategory
     public function removeService(Service $service): static
     {
         if ($this->services->removeElement($service)) {
-            // set the owning side to null (unless already changed)
             if ($service->getCategory() === $this) {
                 $service->setCategory(null);
             }

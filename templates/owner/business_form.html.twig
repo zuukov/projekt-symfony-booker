@@ -183,7 +183,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Character counter for special note
     const specialNoteField = document.querySelector('textarea[name*="specialNote"]');
     const charCountSpan = document.getElementById('char-count');
 
@@ -196,18 +195,15 @@ document.addEventListener('DOMContentLoaded', function() {
         specialNoteField.addEventListener('input', updateCharCount);
     }
 
-    // Photo URLs Collection Management
     const addButton = document.getElementById('add-photo-url');
     const countSpan = document.getElementById('photo-count');
     const maxItems = 10;
 
     if (addButton && countSpan) {
-        // Find the collection container (Symfony renders it with a specific structure)
         const collectionHolder = document.querySelector('[data-prototype]');
 
         if (collectionHolder) {
             function updateCount() {
-                // Count input fields in the collection
                 const count = collectionHolder.querySelectorAll('input[type="url"]').length;
                 countSpan.textContent = count;
                 addButton.disabled = count >= maxItems;
@@ -226,10 +222,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const prototype = collectionHolder.dataset.prototype;
                 const index = collectionHolder.dataset.index || count;
 
-                // Replace __name__ with index
                 const newForm = prototype.replace(/__name__/g, index);
 
-                // Create new item
                 const item = document.createElement('div');
                 item.innerHTML = newForm;
 
@@ -241,7 +235,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             addButton.addEventListener('click', addPhotoUrl);
 
-            // Initialize count
             updateCount();
         }
     }

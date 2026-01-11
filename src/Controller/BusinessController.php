@@ -34,12 +34,11 @@ final class BusinessController extends AbstractController
             throw $this->createNotFoundException('Business not found');
         }
 
-        // Get photo gallery from real data (use photoUrls if available, fallback to logoUrl)
         $gallery = $businessEntity->getPhotoUrls();
         if (empty($gallery) && $businessEntity->getLogoUrl()) {
             $gallery = [$businessEntity->getLogoUrl()];
         }
-        // Fallback to mock if no photos at all
+
         if (empty($gallery)) {
             $gallery = [
                 'https://images.unsplash.com/photo-1521119989659-a83eee488004?auto=format&fit=crop&w=800&q=80',
@@ -47,10 +46,8 @@ final class BusinessController extends AbstractController
             ];
         }
 
-        // Convert BusinessWorkingHours entities to template format
         $openingHours = $this->formatOpeningHours($businessEntity);
 
-        // Map business entity to array format expected by template
         $business = [
             'id' => $businessEntity->getId(),
             'name' => $businessEntity->getBusinessName(),
@@ -66,7 +63,6 @@ final class BusinessController extends AbstractController
             'phone' => $businessEntity->getPhone(),
         ];
 
-        // Get real services from database
         $serviceEntities = $this->serviceRepository->findBy(['business' => $businessEntity, 'isActive' => true]);
         $services = [];
         foreach ($serviceEntities as $serviceEntity) {
@@ -81,7 +77,6 @@ final class BusinessController extends AbstractController
             ];
         }
 
-        // Get real staff from database
         $staffEntities = $this->staffRepository->findBy(['business' => $businessEntity]);
         $staff = [];
         foreach ($staffEntities as $staffEntity) {
@@ -92,7 +87,6 @@ final class BusinessController extends AbstractController
             ];
         }
 
-        // Get real reviews from database
         $reviewEntities = $this->reviewRepository->findBy(['business' => $businessEntity], ['createdAt' => 'DESC'], 10);
         $reviews = [];
         $totalRating = 0;
@@ -114,12 +108,10 @@ final class BusinessController extends AbstractController
             'count' => count($reviewEntities),
         ];
 
-        // Update business rating with calculated value
         if (!empty($reviews)) {
             $business['rating'] = $reviewsSummary['rating'];
         }
 
-        // Build staff-services mapping
         $staffServices = [];
         $staffServiceEntities = $this->staffServiceRepository->findAll();
         foreach ($staffServiceEntities as $ss) {
@@ -150,7 +142,6 @@ final class BusinessController extends AbstractController
 
         $todayIndex = (int) date('N') - 1;
 
-        // Geocode address for map
         $fullAddress = sprintf(
             '%s, %s %s, Poland',
             $businessEntity->getAddress(),
@@ -161,7 +152,7 @@ final class BusinessController extends AbstractController
         $coordinates = $this->geocodingService->geocodeAddress($fullAddress);
         
         $map = [
-            'lat' => $coordinates['lat'] ?? 52.406376, // Default to Poland center
+            'lat' => $coordinates['lat'] ?? 52.406376,
             'lng' => $coordinates['lng'] ?? 16.925167,
             'zoom' => 15,
         ];
@@ -244,13 +235,11 @@ final class BusinessController extends AbstractController
         $hours = [];
         $workingHours = $business->getBusinessWorkingHours();
 
-        // Create map of weekday => hours
         $hoursMap = [];
         foreach ($workingHours as $wh) {
             $hoursMap[$wh->getWeekday()] = $wh;
         }
 
-        // Generate array for all 7 days
         for ($day = 0; $day <= 6; $day++) {
             $hours[] = [
                 'day' => $dayNames[$day],

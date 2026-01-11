@@ -707,7 +707,6 @@
 
         setActiveTab(defaultTab);
 
-        // Handle subtabs for appointments
         const appointmentSubBtns = document.querySelectorAll('[data-tab="appointments"] .user-dashboard__subtab-btn[data-subtab]');
         const appointmentSubPanels = document.querySelectorAll('[data-tab="appointments"] .user-dashboard__subtab[data-subtab-panel]');
         
@@ -721,7 +720,6 @@
             setAppointmentSubtab('upcoming');
         }
 
-        // Handle subtabs for payments
         const paymentSubBtns = document.querySelectorAll('[data-tab="payments"] .user-dashboard__subtab-btn[data-subtab]');
         const paymentSubPanels = document.querySelectorAll('[data-tab="payments"] .user-dashboard__subtab[data-subtab-panel]');
         

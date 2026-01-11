@@ -175,7 +175,6 @@ class Service
     public function removeStaffService(StaffService $staffService): static
     {
         if ($this->staffServices->removeElement($staffService)) {
-            // set the owning side to null (unless already changed)
             if ($staffService->getService() === $this) {
                 $staffService->setService(null);
             }
@@ -205,7 +204,6 @@ class Service
     public function removeBooking(Booking $booking): static
     {
         if ($this->bookings->removeElement($booking)) {
-            // set the owning side to null (unless already changed)
             if ($booking->getService() === $this) {
                 $booking->setService(null);
             }

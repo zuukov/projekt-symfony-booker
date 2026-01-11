@@ -43,7 +43,6 @@ class BusinessWorkingHoursType extends AbstractType
                 ],
             ]);
 
-        // Add validation using form events instead of constraints
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();
             $data = $event->getData();
@@ -52,7 +51,6 @@ class BusinessWorkingHoursType extends AbstractType
                 $opensAt = $data->getOpensAt();
                 $closesAt = $data->getClosesAt();
 
-                // Only validate if both times are set
                 if ($opensAt && $closesAt && $closesAt <= $opensAt) {
                     $form->get('closesAt')->addError(
                         new FormError('Godzina zamknięcia musi być późniejsza niż godzina otwarcia')

@@ -81,7 +81,7 @@ class UserController extends AbstractController
                 'serviceName' => $booking->getService()->getName(),
                 'business' => [
                     'name' => $booking->getBusiness()->getBusinessName(),
-                    'avatarUrl' => 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=200&q=60', // Placeholder
+                    'avatarUrl' => 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=200&q=60',
                     'url' => '/firma/' . $booking->getBusiness()->getId(),
                 ],
                 'date' => [
@@ -95,11 +95,9 @@ class UserController extends AbstractController
                 'ctaUrl' => $this->generateUrl('user_bookings'),
             ];
 
-            // Nadchodzące: status Pending lub Confirmed
             if ($booking->getStatus() === BookingStatus::PENDING || $booking->getStatus() === BookingStatus::CONFIRMED) {
                 $upcomingAppointments[] = $appointmentData;
             }
-            // Przeszłe: status Completed
             elseif ($booking->getStatus() === BookingStatus::COMPLETED) {
                 $pastAppointments[] = $appointmentData;
             }
