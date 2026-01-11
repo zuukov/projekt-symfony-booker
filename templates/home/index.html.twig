@@ -32,11 +32,13 @@
 								<div class="swiper-slide">
 									<article class="card card--place">
 										<div class="card__media">
-											<img src="{{ item.image }}" alt="{{ item.name }}"  class="card__img">
-											<div class="card__badge">
-												<span class="card__badge-score">{{ item.rating|number_format(1, '.', '') }}</span>
-												<span class="card__badge-count">{{ item.reviews }} opinii</span>
-											</div>
+											<a href="{{ item.url }}">
+												<img src="{{ item.image }}" alt="{{ item.name }}"  class="card__img">
+												<div class="card__badge">
+													<span class="card__badge-score">{{ item.rating|number_format(1, '.', '') }}</span>
+													<span class="card__badge-count">{{ item.reviews }} opinii</span>
+												</div>
+											</a>
 										</div>
 
 										<div class="card__body">
