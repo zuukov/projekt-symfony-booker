@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ReviewRepository;
+use App\Entity\Booking;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -30,6 +31,10 @@ class Review
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
+
+    #[ORM\OneToOne]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Booking $booking = null;
 
     public function getId(): ?int
     {
@@ -92,6 +97,18 @@ class Review
     public function setCreatedAt(\DateTimeInterface $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getBooking(): ?Booking
+    {
+        return $this->booking;
+    }
+
+    public function setBooking(?Booking $booking): static
+    {
+        $this->booking = $booking;
 
         return $this;
     }

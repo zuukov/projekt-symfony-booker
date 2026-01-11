@@ -45,8 +45,7 @@
 				<section id="tab-appointments" class="user-dashboard__tab" data-tab="appointments">
 					<div class="bg-white rounded-2xl shadow-sm border border-black/5 p-6 sm:p-7">
 						<div class="flex items-center justify-between gap-4 flex-wrap">
-							<h1 class="text-[22px] sm:text-[24px] font-semibold text-gray-900">Wizyty</h1>
-							<span class="text-gray-500">Historia</span>
+							<h1 class="text-[22px] sm:text-[24px] font-semibold text-gray-900">Nadchodzące wizyty</h1>
 						</div>
 
 						{% if appointments is empty %}
@@ -61,10 +60,10 @@
 										<circle cx="420" cy="90" r="28" fill="currentColor" class="text-gray-100"/>
 									</svg>
 								</div>
-								<div class="mt-6 text-gray-900 font-semibold">Brak wizyt</div>
+								<div class="mt-6 text-gray-900 font-semibold">Brak nadchodzących wizyt</div>
 								<p class="mt-2 text-[14px] text-gray-600 max-w-[520px]">
-									Wygląda na to, że nie masz jeszcze żadnych zakończonych wizyt.
-									Gdy coś zarezerwujesz — pojawi się tutaj historia.
+									Wygląda na to, że nie masz jeszcze żadnych zaplanowanych wizyt.
+									Gdy coś zarezerwujesz — pojawi się tutaj.
 								</p>
 								<a href="/" class="mt-6 inline-flex items-center justify-center px-5 py-3 rounded-xl bg-[#ff4757] text-white font-semibold text-[14px] hover:opacity-95 transition">
 									Znajdź usługę
@@ -133,6 +132,13 @@
 
 						<div class="mt-6">
 							<div class="user-dashboard__subtab" data-subtab-panel="methods">
+								<div class="flex items-center justify-between gap-4 mb-6">
+									<h3 class="text-[18px] font-semibold text-gray-900">Metody płatności</h3>
+									<button type="button" class="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-[#2f3542] text-white font-semibold text-[14px] hover:opacity-95 transition" onclick="showAddCardModal()">
+										<i class="fa-regular fa-plus mr-2"></i>
+										Dodaj kartę
+									</button>
+								</div>
 								{% if paymentMethods is empty %}
 									<div class="flex flex-col items-center justify-center py-14 text-center">
 										<div class="w-full max-w-[320px]">
@@ -149,7 +155,7 @@
 										<p class="mt-2 text-[14px] text-gray-600 max-w-[520px]">
 											Dodaj kartę do profilu, aby płacić szybciej i wygodniej.
 										</p>
-										<button type="button" class="mt-6 inline-flex items-center justify-center px-6 py-3 rounded-xl bg-[#2f3542] text-white font-semibold text-[14px] hover:opacity-95 transition">
+										<button type="button" class="mt-6 inline-flex items-center justify-center px-6 py-3 rounded-xl bg-[#2f3542] text-white font-semibold text-[14px] hover:opacity-95 transition" onclick="showAddCardModal()">
 											Dodaj kartę
 										</button>
 									</div>
@@ -173,8 +179,10 @@
 												</div>
 
 												<div class="flex items-center gap-2">
-													<button type="button" class="px-4 py-2 rounded-xl border border-black/10 bg-white font-semibold text-gray-700 hover:bg-gray-50 transition">Ustaw jako domyślną</button>
-													<button type="button" class="px-4 py-2 rounded-xl border border-black/10 bg-white font-semibold text-gray-700 hover:bg-gray-50 transition">Usuń</button>
+													{% if not pm.isDefault %}
+														<button type="button" onclick="setDefaultCard({{ pm.id }})" class="px-4 py-2 rounded-xl border border-black/10 bg-white font-semibold text-gray-700 hover:bg-gray-50 transition">Ustaw jako domyślną</button>
+													{% endif %}
+													<button type="button" onclick="deleteCard({{ pm.id }})" class="px-4 py-2 rounded-xl border border-black/10 bg-white font-semibold text-gray-700 hover:bg-gray-50 transition">Usuń</button>
 												</div>
 											</div>
 										{% endfor %}
@@ -214,6 +222,227 @@
 					</div>
 				</section>
 
+				<!-- Add Card Modal -->
+				<div id="add-card-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+					<div class="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
+						<div class="flex items-center justify-between mb-4">
+							<h3 class="text-lg font-semibold text-gray-900">Dodaj kartę płatniczą</h3>
+							<button onclick="hideAddCardModal()" class="text-gray-400 hover:text-gray-600">
+								<i class="fa-regular fa-times"></i>
+							</button>
+						</div>
+						<form id="add-card-form">
+							<div class="mb-4">
+								<label class="block text-sm font-medium text-gray-700 mb-1">Numer karty</label>
+								<input type="text" name="card_number" maxlength="16" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="1234567890123456" required>
+							</div>
+							<div class="mb-4">
+								<label class="block text-sm font-medium text-gray-700 mb-1">Data ważności (MM/RR)</label>
+								<input type="text" name="valid_until" maxlength="5" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="12/25" required>
+							</div>
+							<div class="mb-4">
+								<label class="block text-sm font-medium text-gray-700 mb-1">Kod CVC</label>
+								<input type="text" name="cvc_code" maxlength="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="123" required>
+							</div>
+							<div class="mb-4">
+								<label class="block text-sm font-medium text-gray-700 mb-1">Kraj</label>
+								<select name="country" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+									<option value="">Wybierz kraj</option>
+									<option value="Afganistan">Afganistan</option>
+									<option value="Albania">Albania</option>
+									<option value="Algieria">Algieria</option>
+									<option value="Andora">Andora</option>
+									<option value="Angola">Angola</option>
+									<option value="Antigua i Barbuda">Antigua i Barbuda</option>
+									<option value="Arabia Saudyjska">Arabia Saudyjska</option>
+									<option value="Argentyna">Argentyna</option>
+									<option value="Australia">Australia</option>
+									<option value="Austria">Austria</option>
+									<option value="Azerbejdżan">Azerbejdżan</option>
+									<option value="Bahamy">Bahamy</option>
+									<option value="Bahrajn">Bahrajn</option>
+									<option value="Bangladesz">Bangladesz</option>
+									<option value="Barbados">Barbados</option>
+									<option value="Belgia">Belgia</option>
+									<option value="Belize">Belize</option>
+									<option value="Białoruś">Białoruś</option>
+									<option value="Boliwia">Boliwia</option>
+									<option value="Bośnia i Hercegowina">Bośnia i Hercegowina</option>
+									<option value="Botswana">Botswana</option>
+									<option value="Brazylia">Brazylia</option>
+									<option value="Brunei">Brunei</option>
+									<option value="Bułgaria">Bułgaria</option>
+									<option value="Burundi">Burundi</option>
+									<option value="Chile">Chile</option>
+									<option value="Chiny">Chiny</option>
+									<option value="Chorwacja">Chorwacja</option>
+									<option value="Czarnogóra">Czarnogóra</option>
+									<option value="Czechy">Czechy</option>
+									<option value="Dania">Dania</option>
+									<option value="Demokratyczna Republika Konga">Demokratyczna Republika Konga</option>
+									<option value="Dominika">Dominika</option>
+									<option value="Dominikana">Dominikana</option>
+									<option value="Dżibuti">Dżibuti</option>
+									<option value="Egipt">Egipt</option>
+									<option value="Ekwador">Ekwador</option>
+									<option value="Erytrea">Erytrea</option>
+									<option value="Estonia">Estonia</option>
+									<option value="Etiopia">Etiopia</option>
+									<option value="Fidżi">Fidżi</option>
+									<option value="Filipiny">Filipiny</option>
+									<option value="Finlandia">Finlandia</option>
+									<option value="Francja">Francja</option>
+									<option value="Gabon">Gabon</option>
+									<option value="Gambia">Gambia</option>
+									<option value="Ghana">Ghana</option>
+									<option value="Grecja">Grecja</option>
+									<option value="Grenada">Grenada</option>
+									<option value="Gruzja">Gruzja</option>
+									<option value="Guatemala">Guatemala</option>
+									<option value="Gujana">Gujana</option>
+									<option value="Gwatemala">Gwatemala</option>
+									<option value="Haiti">Haiti</option>
+									<option value="Hiszpania">Hiszpania</option>
+									<option value="Holandia">Holandia</option>
+									<option value="Honduras">Honduras</option>
+									<option value="Hongkong">Hongkong</option>
+									<option value="Indie">Indie</option>
+									<option value="Indonezja">Indonezja</option>
+									<option value="Irak">Irak</option>
+									<option value="Iran">Iran</option>
+									<option value="Irlandia">Irlandia</option>
+									<option value="Islandia">Islandia</option>
+									<option value="Izrael">Izrael</option>
+									<option value="Jamajka">Jamajka</option>
+									<option value="Japonia">Japonia</option>
+									<option value="Jemen">Jemen</option>
+									<option value="Jordania">Jordania</option>
+									<option value="Kambodża">Kambodża</option>
+									<option value="Kamerun">Kamerun</option>
+									<option value="Kanada">Kanada</option>
+									<option value="Katar">Katar</option>
+									<option value="Kazachstan">Kazachstan</option>
+									<option value="Kenia">Kenia</option>
+									<option value="Kirgistan">Kirgistan</option>
+									<option value="Kiribati">Kiribati</option>
+									<option value="Kolumbia">Kolumbia</option>
+									<option value="Komory">Komory</option>
+									<option value="Kongo">Kongo</option>
+									<option value="Korea Południowa">Korea Południowa</option>
+									<option value="Korea Północna">Korea Północna</option>
+									<option value="Kostaryka">Kostaryka</option>
+									<option value="Kuwejt">Kuwejt</option>
+									<option value="Laos">Laos</option>
+									<option value="Lesotho">Lesotho</option>
+									<option value="Liban">Liban</option>
+									<option value="Liberia">Liberia</option>
+									<option value="Libia">Libia</option>
+									<option value="Liechtenstein">Liechtenstein</option>
+									<option value="Litwa">Litwa</option>
+									<option value="Luksemburg">Luksemburg</option>
+									<option value="Łotwa">Łotwa</option>
+									<option value="Macedonia Północna">Macedonia Północna</option>
+									<option value="Madagaskar">Madagaskar</option>
+									<option value="Majotta">Majotta</option>
+									<option value="Makau">Makau</option>
+									<option value="Malawi">Malawi</option>
+									<option value="Malediwy">Malediwy</option>
+									<option value="Malezja">Malezja</option>
+									<option value="Mali">Mali</option>
+									<option value="Malta">Malta</option>
+									<option value="Maroko">Maroko</option>
+									<option value="Mauritius">Mauritius</option>
+									<option value="Meksyk">Meksyk</option>
+									<option value="Mikronezja">Mikronezja</option>
+									<option value="Mjanma">Mjanma</option>
+									<option value="Mołdawia">Mołdawia</option>
+									<option value="Monako">Monako</option>
+									<option value="Mongolia">Mongolia</option>
+									<option value="Mozambik">Mozambik</option>
+									<option value="Namibia">Namibia</option>
+									<option value="Nauru">Nauru</option>
+									<option value="Nepal">Nepal</option>
+									<option value="Niemcy">Niemcy</option>
+									<option value="Niger">Niger</option>
+									<option value="Nigeria">Nigeria</option>
+									<option value="Nikaragua">Nikaragua</option>
+									<option value="Norwegia">Norwegia</option>
+									<option value="Nowa Zelandia">Nowa Zelandia</option>
+									<option value="Oman">Oman</option>
+									<option value="Pakistan">Pakistan</option>
+									<option value="Palau">Palau</option>
+									<option value="Panama">Panama</option>
+									<option value="Papua-Nowa Gwinea">Papua-Nowa Gwinea</option>
+									<option value="Paragwaj">Paragwaj</option>
+									<option value="Peru">Peru</option>
+									<option value="Polska">Polska</option>
+									<option value="Portugalia">Portugalia</option>
+									<option value="Republika Środkowoafrykańska">Republika Środkowoafrykańska</option>
+									<option value="Rosja">Rosja</option>
+									<option value="Rumunia">Rumunia</option>
+									<option value="Rwanda">Rwanda</option>
+									<option value="Saint Kitts i Nevis">Saint Kitts i Nevis</option>
+									<option value="Saint Lucia">Saint Lucia</option>
+									<option value="Saint Vincent i Grenadyny">Saint Vincent i Grenadyny</option>
+									<option value="Salwador">Salwador</option>
+									<option value="Samoa">Samoa</option>
+									<option value="San Marino">San Marino</option>
+									<option value="Senegal">Senegal</option>
+									<option value="Serbia">Serbia</option>
+									<option value="Seszele">Seszele</option>
+									<option value="Sierra Leone">Sierra Leone</option>
+									<option value="Singapur">Singapur</option>
+									<option value="Słowacja">Słowacja</option>
+									<option value="Słowenia">Słowenia</option>
+									<option value="Somalia">Somalia</option>
+									<option value="Sri Lanka">Sri Lanka</option>
+									<option value="Stany Zjednoczone">Stany Zjednoczone</option>
+									<option value="Sudan">Sudan</option>
+									<option value="Sudan Południowy">Sudan Południowy</option>
+									<option value="Surinam">Surinam</option>
+									<option value="Syria">Syria</option>
+									<option value="Szwajcaria">Szwajcaria</option>
+									<option value="Szwecja">Szwecja</option>
+									<option value="Tadżykistan">Tadżykistan</option>
+									<option value="Tajlandia">Tajlandia</option>
+									<option value="Tajwan">Tajwan</option>
+									<option value="Tanzania">Tanzania</option>
+									<option value="Timor Wschodni">Timor Wschodni</option>
+									<option value="Togo">Togo</option>
+									<option value="Tonga">Tonga</option>
+									<option value="Trynidad i Tobago">Trynidad i Tobago</option>
+									<option value="Tunezja">Tunezja</option>
+									<option value="Turcja">Turcja</option>
+									<option value="Turkmenistan">Turkmenistan</option>
+									<option value="Tuvalu">Tuvalu</option>
+									<option value="Uganda">Uganda</option>
+									<option value="Ukraina">Ukraina</option>
+									<option value="Urugwaj">Urugwaj</option>
+									<option value="Uzbekistan">Uzbekistan</option>
+									<option value="Vanuatu">Vanuatu</option>
+									<option value="Wenezuela">Wenezuela</option>
+									<option value="Węgry">Węgry</option>
+									<option value="Wielka Brytania">Wielka Brytania</option>
+									<option value="Wietnam">Wietnam</option>
+									<option value="Włochy">Włochy</option>
+									<option value="Wyspy Kanaryjskie">Wyspy Kanaryjskie</option>
+									<option value="Wyspy Marshalla">Wyspy Marshalla</option>
+									<option value="Wyspy Salomona">Wyspy Salomona</option>
+									<option value="Wyspy Świętego Tomasza i Książęca">Wyspy Świętego Tomasza i Książęca</option>
+									<option value="Wyspy Zielonego Przylądka">Wyspy Zielonego Przylądka</option>
+									<option value="Zambia">Zambia</option>
+									<option value="Zimbabwe">Zimbabwe</option>
+									<option value="Zjednoczone Emiraty Arabskie">Zjednoczone Emiraty Arabskie</option>
+								</select>
+							</div>
+							<div class="flex justify-end gap-3">
+								<button type="button" onclick="hideAddCardModal()" class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">Anuluj</button>
+								<button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Dodaj kartę</button>
+							</div>
+						</form>
+					</div>
+				</div>
+
 				<section id="tab-reviews" class="user-dashboard__tab hidden" data-tab="reviews">
 					<div class="bg-white rounded-2xl shadow-sm border border-black/5 p-6 sm:p-7">
 						<div class="flex items-center justify-between gap-4 flex-wrap">
@@ -240,26 +469,41 @@
 								{% for r in reviews %}
 									<article class="border border-black/5 rounded-2xl p-5 bg-gray-50/60">
 										<div class="flex items-start sm:items-center justify-between gap-4 flex-col sm:flex-row">
-											<a href="{{ r.businessUrl }}" class="text-lg font-semibold text-gray-900 hover:underline">{{ r.businessName }}</a>
+											<div>
+												<div class="text-sm text-gray-500">{{ r.serviceName }}</div>
+												<a href="{{ r.businessUrl }}" class="text-lg font-semibold text-gray-900 hover:underline">{{ r.businessName }}</a>
+												<div class="text-[13px] text-gray-500">{{ r.bookingDate }}</div>
+											</div>
 											<div class="flex items-center gap-3">
-												<div class="flex items-center gap-1">
-													{% for i in 1..5 %}
-														<i class="fa-solid fa-star {{ i <= r.rating ? 'text-yellow-400' : 'text-gray-300' }}"></i>
-													{% endfor %}
-												</div>
-												<span class="text-[13px] text-gray-500">{{ r.createdAt }}</span>
+												{% if r.hasReview %}
+													<div class="flex items-center gap-1">
+														{% for i in 1..5 %}
+															<i class="fa-solid fa-star {{ i <= r.rating ? 'text-yellow-400' : 'text-gray-300' }}"></i>
+														{% endfor %}
+													</div>
+													<span class="text-[13px] text-gray-500">{{ r.createdAt }}</span>
+												{% else %}
+													<span class="inline-flex items-center px-3 py-1 rounded-full text-[12px] font-semibold bg-amber-50 text-amber-700">Oceń nas!</span>
+												{% endif %}
 											</div>
 										</div>
 
-										<p class="mt-3 text-gray-700 leading-relaxed">
-											{{ r.text }}
-										</p>
+										{% if r.hasReview %}
+											<p class="mt-3 text-gray-700 leading-relaxed">
+												{{ r.text }}
+											</p>
+										{% else %}
+											<p class="mt-3 text-gray-700 leading-relaxed">Usługa zakończona. Podziel się opinią, aby pomóc innym klientom.</p>
+										{% endif %}
 
-										<div class="mt-4">
+										<div class="mt-4 flex items-center gap-3">
 											<a href="{{ r.businessUrl }}" class="text-[13px] font-semibold text-[#2f3542] hover:underline inline-flex items-center gap-2">
 												Zobacz stronę i opinie
 												<i class="fa-solid fa-arrow-up-right-from-square text-[12px]"></i>
 											</a>
+											{% if not r.hasReview %}
+												<button type="button" onclick="showReviewModal({{ r.bookingId }})" class="inline-flex items-center px-4 py-2 rounded-lg bg-emerald-600 text-white text-[13px] font-semibold hover:bg-emerald-700 transition">Oceń nas!</button>
+											{% endif %}
 										</div>
 									</article>
 								{% endfor %}
@@ -275,7 +519,7 @@
 							<span class="text-gray-500">Zaktualizuj dane profilu</span>
 						</div>
 
-						<form action="#" method="post" class="mt-6 flex flex-col gap-5">
+						<form id="settings-form" method="post" class="mt-6 flex flex-col gap-5">
 							<div class="flex flex-col gap-2">
 								<label class="font-semibold text-gray-700">Imię i nazwisko</label>
 								<input type="text" name="fullName" value="{{ userData.fullName }}" class="w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-[14px] outline-none focus:ring-2 focus:ring-black/10" autocomplete="name">
@@ -333,6 +577,38 @@
 		</div>
 	</div>
 </section>
+
+<!-- Add Review Modal -->
+<div id="add-review-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+	<div class="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
+		<div class="flex items-center justify-between mb-4">
+			<h3 class="text-lg font-semibold text-gray-900">Oceń usługę</h3>
+			<button onclick="hideReviewModal()" class="text-gray-400 hover:text-gray-600">
+				<i class="fa-regular fa-times"></i>
+			</button>
+		</div>
+		<form id="add-review-form">
+			<input type="hidden" name="booking_id" id="review-booking-id">
+			<div class="mb-4">
+				<label class="block text-sm font-medium text-gray-700 mb-2">Ocena</label>
+				<div id="review-stars" class="flex items-center gap-2 text-2xl text-gray-300 cursor-pointer select-none">
+					{% for i in 1..5 %}
+						<i class="fa-solid fa-star" data-value="{{ i }}"></i>
+					{% endfor %}
+				</div>
+				<input type="hidden" name="rating" id="review-rating" value="5" required>
+			</div>
+			<div class="mb-4">
+				<label class="block text-sm font-medium text-gray-700 mb-1">Komentarz (opcjonalnie)</label>
+				<textarea name="comment" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Napisz kilka słów o usłudze..."></textarea>
+			</div>
+			<div class="flex justify-end gap-3">
+				<button type="button" onclick="hideReviewModal()" class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">Anuluj</button>
+				<button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700">Wyślij opinię</button>
+			</div>
+		</form>
+	</div>
+</div>
 {% endblock %}
 
 {% block custom_scripts %}
@@ -386,6 +662,262 @@
             });
         }
     })();
+
+    
+    function showAddCardModal() {
+        document.getElementById('add-card-modal').classList.remove('hidden');
+    }
+
+    function hideAddCardModal() {
+        document.getElementById('add-card-modal').classList.add('hidden');
+    }
+
+	
+	(function () {
+		const expiryInput = document.querySelector('#add-card-form input[name="valid_until"]');
+		if (!expiryInput) return;
+
+		expiryInput.addEventListener('input', (e) => {
+			let v = e.target.value.replace(/[^\d]/g, '');
+			if (v.length > 4) v = v.slice(0, 4);
+			if (v.length >= 3) {
+				v = v.slice(0, 2) + '/' + v.slice(2);
+			} else if (v.length === 2) {
+				v = v + '/';
+			}
+			e.target.value = v;
+		});
+
+		expiryInput.addEventListener('keydown', (e) => {
+			if (e.key === 'Backspace') {
+				const v = expiryInput.value;
+				
+				const pos = expiryInput.selectionStart;
+				if (pos === 3 && v.charAt(2) === '/') {
+					expiryInput.value = v.slice(0, 2);
+					e.preventDefault();
+				}
+			}
+		});
+	})();
+
+	
+	const addCardForm = document.getElementById('add-card-form');
+	if (addCardForm) {
+		addCardForm.addEventListener('submit', function (e) {
+			e.preventDefault();
+			const formData = new FormData(this);
+			const data = new URLSearchParams(formData);
+
+			fetch('/uzytkownik/dodaj-karte', {
+				method: 'POST',
+				body: data,
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+					'X-Requested-With': 'XMLHttpRequest',
+					'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+				}
+			})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+				}
+				return response.json();
+			})
+			.then(data => {
+				if (data.success) {
+					alert('Karta została dodana!');
+					hideAddCardModal();
+					location.reload();
+				} else {
+					alert('Błąd: ' + data.message);
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
+				alert('Wystąpił błąd: ' + error.message);
+			});
+		});
+	}
+
+    function setDefaultCard(cardId) {
+        fetch('/uzytkownik/ustaw-domyslna-karte/' + cardId, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                alert('Karta została ustawiona jako domyślna!');
+                location.reload(); 
+            } else {
+                alert('Błąd: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Wystąpił błąd: ' + error.message);
+        });
+    }
+
+	let reviewModal = document.getElementById('add-review-modal');
+	const reviewForm = document.getElementById('add-review-form');
+	const reviewStars = document.getElementById('review-stars');
+	const reviewRatingInput = document.getElementById('review-rating');
+
+	function setStarsActive(count) {
+		if (!reviewStars) return;
+		const stars = Array.from(reviewStars.querySelectorAll('i[data-value]'));
+		stars.forEach(star => {
+			const val = parseInt(star.getAttribute('data-value'), 10);
+			star.classList.toggle('text-yellow-400', val <= count);
+			star.classList.toggle('text-gray-300', val > count);
+		});
+	}
+
+	if (reviewStars && reviewRatingInput) {
+		setStarsActive(parseInt(reviewRatingInput.value, 10) || 5);
+
+		reviewStars.addEventListener('mouseover', (e) => {
+			const target = e.target;
+			if (target && target.matches('i[data-value]')) {
+				const hoverVal = parseInt(target.getAttribute('data-value'), 10);
+				setStarsActive(hoverVal);
+			}
+		});
+
+		reviewStars.addEventListener('mouseout', () => {
+			const current = parseInt(reviewRatingInput.value, 10) || 5;
+			setStarsActive(current);
+		});
+
+		reviewStars.addEventListener('click', (e) => {
+			const target = e.target;
+			if (target && target.matches('i[data-value]')) {
+				const selected = parseInt(target.getAttribute('data-value'), 10);
+				reviewRatingInput.value = selected;
+				setStarsActive(selected);
+			}
+		});
+	}
+
+	function showReviewModal(bookingId) {
+		document.getElementById('review-booking-id').value = bookingId;
+		reviewModal.classList.remove('hidden');
+	}
+
+	function hideReviewModal() {
+		reviewModal.classList.add('hidden');
+	}
+
+	if (reviewForm) {
+		reviewForm.addEventListener('submit', function(e) {
+			e.preventDefault();
+			const formData = new FormData(this);
+			const data = new URLSearchParams(formData);
+
+			fetch('/uzytkownik/dodaj-opinie', {
+				method: 'POST',
+				body: data,
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+					'X-Requested-With': 'XMLHttpRequest',
+					'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+				}
+			})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+				}
+				return response.json();
+			})
+			.then(data => {
+				if (data.success) {
+					alert('Dziękujemy za opinię!');
+					hideReviewModal();
+					location.reload();
+				} else {
+					alert('Błąd: ' + data.message);
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
+				alert('Wystąpił błąd: ' + error.message);
+			});
+		});
+	}
+
+	function deleteCard(cardId) {
+		if (!confirm('Czy na pewno chcesz usunąć tę kartę?')) {
+			return;
+		}
+
+		fetch('/uzytkownik/usun-karte/' + cardId, {
+			method: 'POST',
+			headers: {
+				'X-Requested-With': 'XMLHttpRequest',
+				'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+			}
+		})
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+			}
+			return response.json();
+		})
+		.then(data => {
+			if (data.success) {
+				alert('Karta została usunięta.');
+				location.reload();
+			} else {
+				alert('Błąd: ' + data.message);
+			}
+		})
+		.catch(error => {
+			console.error('Error:', error);
+			alert('Wystąpił błąd: ' + error.message);
+		});
+	}
+
+    document.getElementById('settings-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const data = new URLSearchParams(formData);
+        fetch('/uzytkownik/zapisz-ustawienia', {
+            method: 'POST',
+            body: data,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                alert('Ustawienia zostały zapisane!');
+            } else {
+                alert('Błąd: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Wystąpił błąd: ' + error.message);
+        });
+    });
 
 </script>
 

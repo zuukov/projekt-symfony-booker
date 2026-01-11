@@ -10,9 +10,9 @@
 
 			<nav class="home__nav flex items-center gap-2 sm:gap-3">
 				{% if app.user %}
-					<a href="{{ path('user_bookings') }}" class="home__nav-link inline-flex items-center gap-2 px-3 py-2 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition">
-						<i class="fa-regular fa-calendar home__icon"></i>
-						<span class="hidden sm:inline">Moje rezerwacje</span>
+					<a href="{{ path('user_dashboard') }}" class="home__nav-link inline-flex items-center gap-2 px-3 py-2 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition">
+						<i class="fa-regular fa-user home__icon"></i>
+						<span class="hidden sm:inline">Moje Konto</span>
 					</a>
 
 					{% if app.user.role.value == 'BUSINESS_OWNER' %}

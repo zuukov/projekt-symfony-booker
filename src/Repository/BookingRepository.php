@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Booking;
+use App\Entity\BookingStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -99,6 +100,22 @@ class BookingRepository extends ServiceEntityRepository
             ->andWhere('b.user = :user')
             ->setParameter('user', $user)
             ->orderBy('b.startsAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findCompletedByUser($user): array
+    {
+        return $this->createQueryBuilder('b')
+            ->leftJoin('b.service', 's')
+            ->leftJoin('b.business', 'bus')
+            ->addSelect('s', 'bus')
+            ->andWhere('b.user = :user')
+            ->andWhere('b.status = :status')
+            ->setParameter('user', $user)
+            ->setParameter('status', BookingStatus::COMPLETED)
+            ->addOrderBy('b.endsAt', 'DESC')
+            ->addOrderBy('b.startsAt', 'DESC')
             ->getQuery()
             ->getResult();
     }
