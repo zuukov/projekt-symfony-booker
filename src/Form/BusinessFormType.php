@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Business;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -195,6 +196,37 @@ class BusinessFormType extends AbstractType
                     'class' => 'block text-sm font-medium text-gray-700 mb-1',
                 ],
             ])
+            ->add('photoUrls', CollectionType::class, [
+                'label' => 'Zdjęcia biznesu (do 10 URLi)',
+                'entry_type' => UrlType::class,
+                'entry_options' => [
+                    'label' => false,
+                    'required' => false,
+                    'constraints' => [
+                        new Assert\Url(),
+                        new Assert\Length(max: 500),
+                    ],
+                    'attr' => [
+                        'class' => 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500',
+                        'placeholder' => 'https://example.com/photo.jpg',
+                    ],
+                ],
+                'allow_add' => true,
+                'allow_delete' => true,
+                'prototype' => true,
+                'required' => false,
+                'by_reference' => false,
+                'attr' => [
+                    'class' => 'photo-urls-collection',
+                    'data-max-items' => 10,
+                ],
+                'constraints' => [
+                    new Assert\Count(max: 10, maxMessage: 'Możesz dodać maksymalnie {{ limit }} zdjęć'),
+                ],
+                'label_attr' => [
+                    'class' => 'block text-sm font-medium text-gray-700 mb-1',
+                ],
+            ])
             ->add('specialNote', TextareaType::class, [
                 'label' => 'Notatka specjalna (święta, dni wolne)',
                 'required' => false,
@@ -206,6 +238,20 @@ class BusinessFormType extends AbstractType
                     'rows' => 2,
                     'maxlength' => 200,
                 ],
+                'label_attr' => [
+                    'class' => 'block text-sm font-medium text-gray-700 mb-1',
+                ],
+            ])
+            ->add('businessWorkingHours', CollectionType::class, [
+                'label' => 'Godziny otwarcia',
+                'entry_type' => BusinessWorkingHoursType::class,
+                'entry_options' => [
+                    'label' => false,
+                ],
+                'allow_add' => false,
+                'allow_delete' => false,
+                'by_reference' => false,
+                'required' => false,
                 'label_attr' => [
                     'class' => 'block text-sm font-medium text-gray-700 mb-1',
                 ],

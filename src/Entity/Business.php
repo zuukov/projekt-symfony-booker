@@ -6,6 +6,7 @@ use App\Repository\BusinessRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BusinessRepository::class)]
 class Business
@@ -61,13 +62,20 @@ class Business
     #[ORM\Column(length: 200, nullable: true)]
     private ?string $specialNote = null;
 
+    #[ORM\Column(type: 'json', nullable: true)]
+    #[Assert\Count(
+        max: 10,
+        maxMessage: 'Możesz dodać maksymalnie {{ limit }} zdjęć'
+    )]
+    private ?array $photoUrls = null;
+
     #[ORM\OneToMany(mappedBy: 'business', targetEntity: Service::class)]
     private Collection $services;
 
     #[ORM\OneToMany(mappedBy: 'business', targetEntity: Staff::class)]
     private Collection $staff;
 
-    #[ORM\OneToMany(mappedBy: 'business', targetEntity: BusinessWorkingHours::class)]
+    #[ORM\OneToMany(mappedBy: 'business', targetEntity: BusinessWorkingHours::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $businessWorkingHours;
 
     #[ORM\OneToMany(mappedBy: 'business', targetEntity: Booking::class)]
@@ -416,6 +424,18 @@ class Business
     public function setSpecialNote(?string $specialNote): static
     {
         $this->specialNote = $specialNote;
+
+        return $this;
+    }
+
+    public function getPhotoUrls(): array
+    {
+        return $this->photoUrls ?? [];
+    }
+
+    public function setPhotoUrls(?array $photoUrls): static
+    {
+        $this->photoUrls = $photoUrls;
 
         return $this;
     }

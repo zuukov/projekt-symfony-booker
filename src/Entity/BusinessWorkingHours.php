@@ -60,7 +60,7 @@ class BusinessWorkingHours
         return $this->opensAt;
     }
 
-    public function setOpensAt(\DateTimeInterface $opensAt): static
+    public function setOpensAt(?\DateTimeInterface $opensAt): static
     {
         $this->opensAt = $opensAt;
 
@@ -72,7 +72,7 @@ class BusinessWorkingHours
         return $this->closesAt;
     }
 
-    public function setClosesAt(\DateTimeInterface $closesAt): static
+    public function setClosesAt(?\DateTimeInterface $closesAt): static
     {
         $this->closesAt = $closesAt;
 

@@ -2,35 +2,55 @@
 
 namespace App\Controller;
 
+use App\Entity\Business;
+use App\Repository\BusinessRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class BusinessController extends AbstractController
 {
+    public function __construct(
+        private BusinessRepository $businessRepository,
+    ) {}
+
     #[Route('/firma/{id}', name: 'business_index', requirements: ['id' => '\d+'])]
     public function index(int $id): Response
     {
-        // na razie wszystko rzucam jako mock do tego widoku dla testow, potem zepniemy to z bazą i real danymi
-        $business = [
-            'id' => $id,
-            'name' => 'Ciach&Style Barbershop',
-            'category' => 'Barber Shop',
-            'address_line' => 'ul. Ogrodowa 12',
-            'city' => 'Lubsko',
-            'postcode' => '68-300',
-            'country' => 'Polska',
-            'rating' => 5.0,
-            'reviews_count' => 178,
-            'featured_image' => 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=1800&q=80',
-        ];
+        $businessEntity = $this->businessRepository->find($id);
 
-        $gallery = [
-            'https://images.unsplash.com/photo-1521119989659-a83eee488004?auto=format&fit=crop&w=800&q=80',
-            'https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&w=800&q=80',
-            'https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=800&q=80',
-            'https://images.unsplash.com/photo-1501696461415-6bd6660c6742?auto=format&fit=crop&w=800&q=80',
-            'https://images.unsplash.com/photo-1521119989659-a83eee488004?auto=format&fit=crop&w=800&q=80',
+        if (!$businessEntity) {
+            throw $this->createNotFoundException('Business not found');
+        }
+
+        // Get photo gallery from real data (use photoUrls if available, fallback to logoUrl)
+        $gallery = $businessEntity->getPhotoUrls();
+        if (empty($gallery) && $businessEntity->getLogoUrl()) {
+            $gallery = [$businessEntity->getLogoUrl()];
+        }
+        // Fallback to mock if no photos at all
+        if (empty($gallery)) {
+            $gallery = [
+                'https://images.unsplash.com/photo-1521119989659-a83eee488004?auto=format&fit=crop&w=800&q=80',
+                'https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&w=800&q=80',
+            ];
+        }
+
+        // Convert BusinessWorkingHours entities to template format
+        $openingHours = $this->formatOpeningHours($businessEntity);
+
+        // Map business entity to array format expected by template
+        $business = [
+            'id' => $businessEntity->getId(),
+            'name' => $businessEntity->getBusinessName(),
+            'category' => 'Barber Shop', // TODO: Add category field to Business entity
+            'address_line' => $businessEntity->getAddress(),
+            'city' => $businessEntity->getCity(),
+            'postcode' => $businessEntity->getPostalCode(),
+            'country' => 'Polska',
+            'rating' => 5.0, // TODO: Calculate from reviews
+            'reviews_count' => 178, // TODO: Count reviews
+            'featured_image' => $businessEntity->getLogoUrl() ?? 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=1800&q=80',
         ];
 
         $services = [
@@ -157,16 +177,6 @@ final class BusinessController extends AbstractController
             203 => [102],
         ];
 
-        $openingHours = [
-            ['day' => 'Poniedziałek', 'hours' => '10:00 – 18:00'],
-            ['day' => 'Wtorek', 'hours' => '10:00 – 18:00'],
-            ['day' => 'Środa', 'hours' => '10:00 – 18:00'],
-            ['day' => 'Czwartek', 'hours' => '10:00 – 18:00'],
-            ['day' => 'Piątek', 'hours' => '10:00 – 19:00'],
-            ['day' => 'Sobota', 'hours' => '10:00 – 14:00'],
-            ['day' => 'Niedziela', 'hours' => 'Nieczynne'],
-        ];
-
         $todayIndex = (int) date('N') - 1;
 
         $map = [
@@ -175,11 +185,11 @@ final class BusinessController extends AbstractController
             'zoom' => 15,
         ];
 
-        $about = 'Jesteśmy miejscem, w którym liczy się detal. Stawiamy na klasykę, precyzję i dobrą atmosferę. Wpadnij na szybkie strzyżenie albo pełny pakiet — dobierzemy styl pod Ciebie.';
+        $about = $businessEntity->getDescription() ?? 'Jesteśmy miejscem, w którym liczy się detal. Stawiamy na klasykę, precyzję i dobrą atmosferę.';
 
         $socials = [
-            'facebook' => 'https://facebook.com',
-            'instagram' => 'https://instagram.com',
+            'facebook' => $businessEntity->getFacebookUrl(),
+            'instagram' => $businessEntity->getInstagramUrl(),
         ];
 
         $bookingAvailability = [];
@@ -241,5 +251,34 @@ final class BusinessController extends AbstractController
             'about' => $about,
             'socials' => $socials,
         ]);
+    }
+
+    private function formatOpeningHours(Business $business): array
+    {
+        $dayNames = [
+            'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek',
+            'Piątek', 'Sobota', 'Niedziela'
+        ];
+
+        $hours = [];
+        $workingHours = $business->getBusinessWorkingHours();
+
+        // Create map of weekday => hours
+        $hoursMap = [];
+        foreach ($workingHours as $wh) {
+            $hoursMap[$wh->getWeekday()] = $wh;
+        }
+
+        // Generate array for all 7 days
+        for ($day = 0; $day <= 6; $day++) {
+            $hours[] = [
+                'day' => $dayNames[$day],
+                'hours' => isset($hoursMap[$day]) && $hoursMap[$day]->getOpensAt() && $hoursMap[$day]->getClosesAt()
+                    ? $hoursMap[$day]->getOpensAt()->format('H:i') . ' – ' . $hoursMap[$day]->getClosesAt()->format('H:i')
+                    : 'Nieczynne'
+            ];
+        }
+
+        return $hours;
     }
 }

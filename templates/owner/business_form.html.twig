@@ -80,6 +80,50 @@
                             </div>
                         </div>
 
+                        {# Photo URLs Section #}
+                        <div class="mt-6 border-t pt-6">
+                            {{ form_row(form.photoUrls) }}
+                            <div id="photo-urls-wrapper" class="mt-2">
+                                <button type="button" id="add-photo-url" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                                    <i class="fa-solid fa-plus"></i> Dodaj URL zdjęcia
+                                </button>
+                                <p class="text-xs text-gray-500 mt-1">
+                                    Dodano <span id="photo-count">0</span>/10 zdjęć
+                                </p>
+                            </div>
+                        </div>
+
+                        {# Opening Hours Section #}
+                        {% if form.businessWorkingHours is defined %}
+                        <div class="mt-6 border-t pt-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Godziny otwarcia</h3>
+                            <p class="text-sm text-gray-600 mb-4">
+                                Ustaw godziny otwarcia dla każdego dnia tygodnia. Pozostaw puste pola dla dni, w które jesteś nieczynny.
+                            </p>
+
+                            <div class="space-y-3">
+                                {% set dayNames = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'] %}
+                                {% for hours in form.businessWorkingHours %}
+                                    {% set weekdayIndex = hours.vars.value.weekday ?? loop.index0 %}
+                                    <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-md">
+                                        <div class="w-32 font-medium text-gray-700">
+                                            {{ dayNames[weekdayIndex] ?? 'Dzień ' ~ (weekdayIndex + 1) }}
+                                        </div>
+                                        <div class="flex items-center gap-2 flex-1">
+                                            <label class="text-sm text-gray-600">Otwarte:</label>
+                                            {{ form_widget(hours.opensAt) }}
+                                            <span class="text-gray-500">—</span>
+                                            <label class="text-sm text-gray-600">Zamknięte:</label>
+                                            {{ form_widget(hours.closesAt) }}
+                                        </div>
+                                        {{ form_widget(hours.weekday) }}
+                                    </div>
+                                    {{ form_errors(hours) }}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
                         <div class="flex justify-between mt-6">
                             <a href="{{ path('owner_dashboard') }}" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">Anuluj</a>
                             <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
@@ -95,6 +139,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Character counter for special note
     const specialNoteField = document.querySelector('textarea[name*="specialNote"]');
     const charCountSpan = document.getElementById('char-count');
 
@@ -105,6 +150,56 @@ document.addEventListener('DOMContentLoaded', function() {
 
         updateCharCount();
         specialNoteField.addEventListener('input', updateCharCount);
+    }
+
+    // Photo URLs Collection Management
+    const addButton = document.getElementById('add-photo-url');
+    const countSpan = document.getElementById('photo-count');
+    const maxItems = 10;
+
+    if (addButton && countSpan) {
+        // Find the collection container (Symfony renders it with a specific structure)
+        const collectionHolder = document.querySelector('[data-prototype]');
+
+        if (collectionHolder) {
+            function updateCount() {
+                // Count input fields in the collection
+                const count = collectionHolder.querySelectorAll('input[type="url"]').length;
+                countSpan.textContent = count;
+                addButton.disabled = count >= maxItems;
+
+                if (count >= maxItems) {
+                    addButton.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    addButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+
+            function addPhotoUrl() {
+                const count = collectionHolder.querySelectorAll('input[type="url"]').length;
+                if (count >= maxItems) return;
+
+                const prototype = collectionHolder.dataset.prototype;
+                const index = collectionHolder.dataset.index || count;
+
+                // Replace __name__ with index
+                const newForm = prototype.replace(/__name__/g, index);
+
+                // Create new item
+                const item = document.createElement('div');
+                item.innerHTML = newForm;
+
+                collectionHolder.appendChild(item);
+                collectionHolder.dataset.index = parseInt(index) + 1;
+
+                updateCount();
+            }
+
+            addButton.addEventListener('click', addPhotoUrl);
+
+            // Initialize count
+            updateCount();
+        }
     }
 });
 </script>

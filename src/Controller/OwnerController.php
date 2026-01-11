@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Booking;
 use App\Entity\BookingStatus;
 use App\Entity\Business;
+use App\Entity\BusinessWorkingHours;
 use App\Entity\Service;
 use App\Entity\Staff;
 use App\Entity\StaffService;
@@ -79,6 +80,14 @@ class OwnerController extends AbstractController
         $business = new Business();
         $business->setOwner($user);
 
+        // Initialize all 7 weekdays with empty hours
+        for ($day = 0; $day <= 6; $day++) {
+            $newHour = new BusinessWorkingHours();
+            $newHour->setWeekday($day);
+            $newHour->setBusiness($business);
+            $business->addBusinessWorkingHour($newHour);
+        }
+
         $form = $this->createForm(BusinessFormType::class, $business, [
             'is_edit' => false,
         ]);
@@ -86,6 +95,14 @@ class OwnerController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Remove working hours with empty times (closed days)
+            $workingHours = $business->getBusinessWorkingHours()->toArray();
+            foreach ($workingHours as $hour) {
+                if (!$hour->getOpensAt() || !$hour->getClosesAt()) {
+                    $business->removeBusinessWorkingHour($hour);
+                }
+            }
+
             $this->entityManager->persist($business);
             $this->entityManager->flush();
 
@@ -110,6 +127,23 @@ class OwnerController extends AbstractController
             throw $this->createAccessDeniedException('Access denied.');
         }
 
+        // Pre-populate missing weekdays (ensure all 7 days exist)
+        $existingHours = $business->getBusinessWorkingHours();
+        $existingWeekdays = [];
+        foreach ($existingHours as $hour) {
+            $existingWeekdays[$hour->getWeekday()] = true;
+        }
+
+        // Add missing weekdays with null times
+        for ($day = 0; $day <= 6; $day++) {
+            if (!isset($existingWeekdays[$day])) {
+                $newHour = new BusinessWorkingHours();
+                $newHour->setWeekday($day);
+                $newHour->setBusiness($business);
+                $business->addBusinessWorkingHour($newHour);
+            }
+        }
+
         $form = $this->createForm(BusinessFormType::class, $business, [
             'is_edit' => true,
         ]);
@@ -117,6 +151,15 @@ class OwnerController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Remove working hours with empty times (closed days)
+            $workingHours = $business->getBusinessWorkingHours()->toArray();
+            foreach ($workingHours as $hour) {
+                if (!$hour->getOpensAt() || !$hour->getClosesAt()) {
+                    // orphanRemoval will automatically delete this from database
+                    $business->removeBusinessWorkingHour($hour);
+                }
+            }
+
             $this->entityManager->flush();
 
             $this->addFlash('success', 'Business updated successfully.');
