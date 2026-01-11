@@ -58,6 +58,11 @@ class BookingController extends AbstractController
     #[Route('/rezerwacja/biznes/{businessId}/usluga/{serviceId}/pracownik/{staffId}', name: 'booking_select_datetime')]
     public function selectDateTime(int $businessId, int $serviceId, int $staffId): Response
     {
+
+        if ($this->isGranted('ROLE_BUSINESS_OWNER')) {
+            return $this->redirectToRoute('app_home');
+        }
+
         $business = $this->businessRepository->find($businessId);
         $service = $this->serviceRepository->find($serviceId);
         $staff = $this->staffRepository->find($staffId);
