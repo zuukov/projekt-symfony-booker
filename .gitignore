@@ -5,7 +5,10 @@
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
-/var/
+/var/*
+!/var/data/
+/var/data/*
+!/var/data/booker.db
 /vendor/
 ###< symfony/framework-bundle ###
 
@@ -22,4 +25,3 @@
 ### other ###
 /.idea/
 /.vscode/
-.env
