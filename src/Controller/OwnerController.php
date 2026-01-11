@@ -79,6 +79,13 @@ class OwnerController extends AbstractController
             throw $this->createAccessDeniedException('Access denied. Business owner role required.');
         }
 
+        // Check if user already has a business
+        $existingBusiness = $this->businessRepository->findOneBy(['owner' => $user]);
+        if ($existingBusiness) {
+            $this->addFlash('error', 'Masz już utworzony biznes. Nie możesz utworzyć więcej niż jeden biznes.');
+            return $this->redirectToRoute('owner_dashboard');
+        }
+
         $business = new Business();
         $business->setOwner($user);
 
