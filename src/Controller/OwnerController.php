@@ -54,8 +54,6 @@ class OwnerController extends AbstractController
     {
         $user = $this->getUser();
 
-        error_log('Owner dashboard called for user: ' . $user->getEmail() . ' roles: ' . implode(', ', $user->getRoles()));
-
         if ($user->getRole() !== UserRole::BUSINESS_OWNER) {
             throw $this->createAccessDeniedException('Access denied. Business owner role required.');
         }
@@ -165,7 +163,7 @@ class OwnerController extends AbstractController
 
             $this->addFlash('success', 'Business updated successfully.');
 
-            return $this->redirectToRoute('owner_business_staff', ['id' => $business->getId()]);
+            return $this->redirectToRoute('owner_business_edit', ['id' => $business->getId()]);
         }
 
         return $this->render('owner/business_form.html.twig', [
