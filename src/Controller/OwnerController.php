@@ -62,9 +62,11 @@ class OwnerController extends AbstractController
         }
 
         $businesses = $this->businessRepository->findBy(['owner' => $user]);
+        $firstBusiness = !empty($businesses) ? $businesses[0] : null;
 
         return $this->render('owner/dashboard.html.twig', [
             'businesses' => $businesses,
+            'firstBusiness' => $firstBusiness,
         ]);
     }
 

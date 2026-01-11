@@ -13,6 +13,13 @@
 					</a>
 
 					{% if app.user.role.value == 'BUSINESS_OWNER' %}
+						{% if business is defined and business %}
+							<a href="{{ path('owner_calendar', {id: business.id}) }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-gray-700 hover:text-gray-900 hover:bg-gray-100 transition">
+								<i class="fa-regular fa-calendar"></i>
+								<span>Rezerwacje</span>
+							</a>
+						{% endif %}
+
 						<a href="{{ path('owner_dashboard') }}" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-gray-700 hover:text-gray-900 hover:bg-gray-100 transition">
 							<i class="fa-regular fa-building"></i>
 							<span>Panel właściciela</span>

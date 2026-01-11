@@ -14,10 +14,30 @@
 						<a href="{{ path('owner_dashboard') }}"
 						class="home__nav-link inline-flex items-center gap-2 px-3 py-2 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition">
 							<i class="fa-solid fa-briefcase home__icon"></i>
-							<span class="hidden sm:inline">Panel biznesu</span>
+							<span class="hidden sm:inline">Panel Właściciela</span>
 						</a>
 
+						{% if business is defined and business %}
+							<a href="{{ path('owner_calendar', {id: business.id}) }}"
+							class="home__nav-link inline-flex items-center gap-2 px-3 py-2 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition">
+								<i class="fa-regular fa-calendar home__icon"></i>
+								<span class="hidden sm:inline">Rezerwacje</span>
+							</a>
+						{% elseif firstBusiness is defined and firstBusiness %}
+							<a href="{{ path('owner_calendar', {id: firstBusiness.id}) }}"
+							class="home__nav-link inline-flex items-center gap-2 px-3 py-2 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition">
+								<i class="fa-regular fa-calendar home__icon"></i>
+								<span class="hidden sm:inline">Rezerwacje</span>
+							</a>
+						{% endif %}
+
 					{% else %}
+						<a href="{{ path('user_dashboard') }}"
+						class="home__nav-link inline-flex items-center gap-2 px-3 py-2 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition">
+							<i class="fa-regular fa-user home__icon"></i>
+							<span class="hidden sm:inline">Moje Konto</span>
+						</a>
+
 						<a href="{{ path('user_calendar') }}"
 						class="home__nav-link inline-flex items-center gap-2 px-3 py-2 rounded-xl text-white/90 hover:text-white hover:bg-white/10 transition">
 							<i class="fa-regular fa-calendar home__icon"></i>

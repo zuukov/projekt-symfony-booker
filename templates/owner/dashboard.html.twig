@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block body %}
-<div class="max-w-7xl mx-auto px-4 py-8">
+<div class="max-w-7xl mx-auto px-4 py-8 pt-14 pb-40">
     <h1 class="text-3xl font-bold text-gray-900 mb-6">Panel Właściciela Biznesu</h1>
 
     <div class="flex justify-between items-center mb-6">
@@ -27,7 +27,7 @@
     {% else %}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for business in businesses %}
-                <div class="bg-white rounded-lg shadow hover:shadow-lg transition flex flex-col">
+                <div class="bg-white rounded-lg shadow hover:shadow-lg transition flex flex-col border">
                     <div class="px-6 py-4 flex-1">
                         <h5 class="text-xl font-semibold text-gray-900 mb-2">{{ business.businessName }}</h5>
                         <p class="text-gray-600 mb-3">{{ business.description ?: 'Brak opisu' }}</p>
