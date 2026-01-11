@@ -56,7 +56,6 @@ class OwnerController extends AbstractController
 
         error_log('Owner dashboard called for user: ' . $user->getEmail() . ' roles: ' . implode(', ', $user->getRoles()));
 
-        // Check if user is business owner
         if ($user->getRole() !== UserRole::BUSINESS_OWNER) {
             throw $this->createAccessDeniedException('Access denied. Business owner role required.');
         }
@@ -79,7 +78,6 @@ class OwnerController extends AbstractController
             throw $this->createAccessDeniedException('Access denied. Business owner role required.');
         }
 
-        // Check if user already has a business
         $existingBusiness = $this->businessRepository->findOneBy(['owner' => $user]);
         if ($existingBusiness) {
             $this->addFlash('error', 'Masz już utworzony biznes. Nie możesz utworzyć więcej niż jeden biznes.');
@@ -89,7 +87,6 @@ class OwnerController extends AbstractController
         $business = new Business();
         $business->setOwner($user);
 
-        // Initialize all 7 weekdays with empty hours
         for ($day = 0; $day <= 6; $day++) {
             $newHour = new BusinessWorkingHours();
             $newHour->setWeekday($day);
@@ -104,7 +101,6 @@ class OwnerController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Remove working hours with empty times (closed days)
             $workingHours = $business->getBusinessWorkingHours()->toArray();
             foreach ($workingHours as $hour) {
                 if (!$hour->getOpensAt() || !$hour->getClosesAt()) {
@@ -136,14 +132,12 @@ class OwnerController extends AbstractController
             throw $this->createAccessDeniedException('Access denied.');
         }
 
-        // Pre-populate missing weekdays (ensure all 7 days exist)
         $existingHours = $business->getBusinessWorkingHours();
         $existingWeekdays = [];
         foreach ($existingHours as $hour) {
             $existingWeekdays[$hour->getWeekday()] = true;
         }
 
-        // Add missing weekdays with null times
         for ($day = 0; $day <= 6; $day++) {
             if (!isset($existingWeekdays[$day])) {
                 $newHour = new BusinessWorkingHours();
@@ -160,11 +154,9 @@ class OwnerController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Remove working hours with empty times (closed days)
             $workingHours = $business->getBusinessWorkingHours()->toArray();
             foreach ($workingHours as $hour) {
                 if (!$hour->getOpensAt() || !$hour->getClosesAt()) {
-                    // orphanRemoval will automatically delete this from database
                     $business->removeBusinessWorkingHour($hour);
                 }
             }
@@ -772,7 +764,6 @@ class OwnerController extends AbstractController
 
             $events = [];
             foreach ($bookings as $booking) {
-                // Skip bookings with missing required data
                 if (!$booking->getStatus() || !$booking->getService() || !$booking->getStaff() || !$booking->getUser()) {
                     continue;
                 }

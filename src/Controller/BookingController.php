@@ -248,7 +248,6 @@ class BookingController extends AbstractController
 
             $events = [];
             foreach ($bookings as $booking) {
-                // Skip bookings with missing required data
                 if (!$booking->getStatus() || !$booking->getService() || !$booking->getStaff() || !$booking->getBusiness()) {
                     continue;
                 }

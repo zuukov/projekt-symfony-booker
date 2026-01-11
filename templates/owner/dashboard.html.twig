@@ -28,9 +28,12 @@
     {% else %}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for business in businesses %}
-                <div class="bg-white rounded-lg shadow hover:shadow-lg transition flex flex-col">
+                <div class="bg-white rounded-lg border shadow hover:shadow-lg transition flex flex-col">
                     <div class="px-6 py-4 flex-1">
-                        <h5 class="text-xl font-semibold text-gray-900 mb-2">{{ business.businessName }}</h5>
+                    <a href="/firma/{{ business.id }}">
+                        <img src="{{ business.logoUrl }}" class="max-h-[200px] w-auto rounded-md mx-auto block text-center mb-5">
+                    </a>
+                        <a href="/firma/{{ business.id }}"><h5 class="text-xl font-semibold text-gray-900 mb-2">{{ business.businessName }}</h5></a>
                         <p class="text-gray-600 mb-3">{{ business.description ?: 'Brak opisu' }}</p>
                         <p class="text-sm text-gray-500">
                             {{ business.city }}, {{ business.address }}
