@@ -54,13 +54,13 @@ final class BusinessController extends AbstractController
         $business = [
             'id' => $businessEntity->getId(),
             'name' => $businessEntity->getBusinessName(),
-            'category' => 'Barber Shop', // TODO: Add category field to Business entity
+            'category' => 'Barber Shop',
             'address_line' => $businessEntity->getAddress(),
             'city' => $businessEntity->getCity(),
             'postcode' => $businessEntity->getPostalCode(),
             'country' => 'Polska',
-            'rating' => 5.0, // TODO: Calculate from reviews
-            'reviews_count' => count($businessEntity->getReviews()), // Real count
+            'rating' => 5.0,
+            'reviews_count' => count($businessEntity->getReviews()),
             'featured_image' => $businessEntity->getLogoUrl() ?? 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=1800&q=80',
             'email' => $businessEntity->getEmail(),
             'phone' => $businessEntity->getPhone(),
@@ -99,8 +99,8 @@ final class BusinessController extends AbstractController
         foreach ($reviewEntities as $reviewEntity) {
             $reviews[] = [
                 'rating' => $reviewEntity->getRating(),
-                'service' => '', // TODO: Link review to service
-                'staff' => '', // TODO: Link review to staff
+                'service' => '',
+                'staff' => '',
                 'author' => $reviewEntity->getUser()->getName() . ' ' . substr($reviewEntity->getUser()->getSurname(), 0, 1) . '.',
                 'date' => $reviewEntity->getCreatedAt()->format('Y-m-d'),
                 'verified' => true,

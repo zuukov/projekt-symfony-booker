@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Business;
-use App\Entity\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -20,8 +19,6 @@ final class ServiceLandingController extends AbstractController
         'Toruń','Gliwice','Częstochowa','Radom'
     ];
 
-    // na teraz jako mvp 9 landingow hardcoded z poziomu tego kontrolera
-    // w przyszlosci mozna to wpiac w baze i np dodac panel admina z edycja
     private const LANDINGS = [
         'fryzjer' => [
             'name' => 'Usługi fryzjerskie',
