@@ -64,12 +64,9 @@
 					<div class="business-services__list mt-4 flex flex-col">
 						{% for s in services %}
 							<div class="business-service flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 py-5 {% if not loop.last %}border-b border-black/10{% endif %}">
-								<div class="business-service__left flex flex-col gap-2 sm:pr-4">
-									<h3 class="font-bold text-[var(--c-primary)] text-lg leading-tight">{{ s.name }}</h3>
-									<p class="text-[var(--c-secondary)] leading-relaxed max-w-[600px]">{{ s.desc }}</p>
-
+								<div class="business-service__left flex gap-3 sm:pr-4 flex-1">
 									{% if s.images is not empty %}
-										<div class="business-service__imgs mt-2 flex items-center gap-2 flex-wrap">
+										<div class="business-service__imgs flex items-start gap-2 flex-shrink-0">
 											{% for img in s.images %}
 												<button type="button" class="business-lightbox-trigger" data-lightbox-src="{{ img }}">
 													<img src="{{ img }}" alt="{{ s.name }} - zdjęcie {{ loop.index }}" class="w-14 h-14 rounded-md object-cover border border-black/10">
@@ -77,6 +74,11 @@
 											{% endfor %}
 										</div>
 									{% endif %}
+									
+									<div class="flex flex-col gap-2 flex-1">
+										<h3 class="font-bold text-[var(--c-primary)] text-lg leading-tight">{{ s.name }}</h3>
+										<p class="text-[var(--c-secondary)] leading-relaxed max-w-[600px]">{{ s.desc }}</p>
+									</div>
 								</div>
 
 								<div class="business-service__right flex items-stretch justify-between sm:justify-end gap-4 sm:gap-7 sm:min-w-[260px]">
