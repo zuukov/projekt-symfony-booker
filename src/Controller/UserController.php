@@ -55,10 +55,13 @@ class UserController extends AbstractController
         ];
 
         
-        $upcomingBookings = $entityManager->getRepository(Booking::class)->findUpcomingByUser($user);
+        $bookingRepo = $entityManager->getRepository(Booking::class);
+        $allBookings = $bookingRepo->findBy(['user' => $user], ['startsAt' => 'DESC']);
 
-        $appointments = [];
-        foreach ($upcomingBookings as $booking) {
+        $upcomingAppointments = [];
+        $pastAppointments = [];
+
+        foreach ($allBookings as $booking) {
             $statusLabel = match ($booking->getStatus()) {
                 BookingStatus::CONFIRMED => 'Potwierdzona',
                 BookingStatus::PENDING => 'Oczekująca',
@@ -72,14 +75,14 @@ class UserController extends AbstractController
                 BookingStatus::COMPLETED => 'success',
             };
 
-            $appointments[] = [
+            $appointmentData = [
                 'statusLabel' => $statusLabel,
                 'statusTone' => $statusTone,
                 'serviceName' => $booking->getService()->getName(),
                 'business' => [
                     'name' => $booking->getBusiness()->getBusinessName(),
                     'avatarUrl' => 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=200&q=60', // Placeholder
-                    'url' => '/business/' . $booking->getBusiness()->getId(),
+                    'url' => '/firma/' . $booking->getBusiness()->getId(),
                 ],
                 'date' => [
                     'monthShort' => $booking->getStartsAt()->format('M'),
@@ -89,8 +92,17 @@ class UserController extends AbstractController
                     'iso' => $booking->getStartsAt()->format('Y-m-d H:i'),
                 ],
                 'ctaLabel' => 'Zarządzaj wizytą',
-                'ctaUrl' => '#', // Placeholder
+                'ctaUrl' => $this->generateUrl('user_bookings'),
             ];
+
+            // Nadchodzące: status Pending lub Confirmed
+            if ($booking->getStatus() === BookingStatus::PENDING || $booking->getStatus() === BookingStatus::CONFIRMED) {
+                $upcomingAppointments[] = $appointmentData;
+            }
+            // Przeszłe: status Completed
+            elseif ($booking->getStatus() === BookingStatus::COMPLETED) {
+                $pastAppointments[] = $appointmentData;
+            }
         }
 
         $paymentMethods = [];
@@ -129,7 +141,7 @@ class UserController extends AbstractController
 
             $reviews[] = [
                 'businessName' => $booking->getBusiness()->getBusinessName(),
-                'businessUrl' => '/business/' . $booking->getBusiness()->getId() . '#reviews',
+                'businessUrl' => '/firma/' . $booking->getBusiness()->getId() . '#reviews',
                 'serviceName' => $booking->getService()->getName(),
                 'bookingDate' => ($booking->getEndsAt() ?: $booking->getStartsAt())?->format('Y-m-d H:i'),
                 'bookingId' => $booking->getId(),
@@ -146,13 +158,14 @@ class UserController extends AbstractController
             ['key' => 'reviews', 'label' => 'Opinie', 'icon' => 'fa-regular fa-star'],
             ['key' => 'settings', 'label' => 'Ustawienia konta', 'icon' => 'fa-regular fa-user']
         ];
-
+        
         return $this->render('user/dashboard.html.twig', [
             'user' => $user,
             'userData' => $userData,
             'tabs' => $tabs,
             'defaultTab' => 'appointments',
-            'appointments' => $appointments,
+            'upcomingAppointments' => $upcomingAppointments,
+            'pastAppointments' => $pastAppointments,
             'paymentMethods' => $paymentMethods,
             'paymentHistory' => $paymentHistory,
             'reviews' => $reviews,

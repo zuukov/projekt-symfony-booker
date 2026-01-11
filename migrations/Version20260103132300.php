@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Add aboutMe, experience, and school fields to Staff entity
  */
-final class Version20251214184300 extends AbstractMigration
+final class Version20260103132300 extends AbstractMigration
 {
     public function getDescription(): string
     {

@@ -33,7 +33,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/owner')]
+#[Route('/wlasciciel')]
 #[IsGranted('ROLE_BUSINESS_OWNER')]
 class OwnerController extends AbstractController
 {
@@ -70,7 +70,7 @@ class OwnerController extends AbstractController
         ]);
     }
 
-    #[Route('/business/create', name: 'owner_business_create')]
+    #[Route('/biznes/utworz', name: 'owner_business_create')]
     public function createBusiness(Request $request): Response
     {
         $user = $this->getUser();
@@ -120,7 +120,7 @@ class OwnerController extends AbstractController
         ]);
     }
 
-    #[Route('/business/{id}/edit', name: 'owner_business_edit')]
+    #[Route('/biznes/{id}/edytuj', name: 'owner_business_edit')]
     public function editBusiness(Request $request, Business $business): Response
     {
         $user = $this->getUser();
@@ -176,7 +176,7 @@ class OwnerController extends AbstractController
         ]);
     }
 
-    #[Route('/business/{id}/delete', name: 'owner_business_delete', methods: ['POST'])]
+    #[Route('/biznes/{id}/usun', name: 'owner_business_delete', methods: ['POST'])]
     public function deleteBusiness(Request $request, Business $business): Response
     {
         $user = $this->getUser();
@@ -195,7 +195,7 @@ class OwnerController extends AbstractController
         return $this->redirectToRoute('owner_dashboard');
     }
 
-    #[Route('/business/{id}/staff', name: 'owner_business_staff')]
+    #[Route('/biznes/{id}/personel', name: 'owner_business_staff')]
     public function listStaff(Business $business): Response
     {
         $user = $this->getUser();
@@ -212,7 +212,7 @@ class OwnerController extends AbstractController
         ]);
     }
 
-    #[Route('/business/{id}/staff/create', name: 'owner_staff_create')]
+    #[Route('/biznes/{id}/personel/utworz', name: 'owner_staff_create')]
     public function createStaff(Request $request, Business $business): Response
     {
         $user = $this->getUser();
@@ -245,7 +245,7 @@ class OwnerController extends AbstractController
         ]);
     }
 
-    #[Route('/business/{businessId}/staff/{staffId}/edit', name: 'owner_staff_edit')]
+    #[Route('/biznes/{businessId}/personel/{staffId}/edytuj', name: 'owner_staff_edit')]
     public function editStaff(Request $request, int $businessId, int $staffId): Response
     {
         $user = $this->getUser();
@@ -284,7 +284,7 @@ class OwnerController extends AbstractController
         ]);
     }
 
-    #[Route('/business/{businessId}/staff/{staffId}/delete', name: 'owner_staff_delete', methods: ['POST'])]
+    #[Route('/biznes/{businessId}/personel/{staffId}/usun', name: 'owner_staff_delete', methods: ['POST'])]
     public function deleteStaff(Request $request, int $businessId, int $staffId): Response
     {
         $user = $this->getUser();
@@ -313,7 +313,7 @@ class OwnerController extends AbstractController
         return $this->redirectToRoute('owner_business_staff', ['id' => $business->getId()]);
     }
 
-    #[Route('/wlasciciel/biznes/{id}/pracownik/{staffId}/grafik', name: 'owner_staff_schedule')]
+    #[Route('/biznes/{id}/pracownik/{staffId}/grafik', name: 'owner_staff_schedule')]
     public function staffSchedule(Request $request, Business $business, int $staffId): Response
     {
         $user = $this->getUser();
@@ -356,7 +356,7 @@ class OwnerController extends AbstractController
         ]);
     }
 
-    #[Route('/wlasciciel/biznes/{businessId}/pracownik/{staffId}/grafik/{scheduleId}/usun', name: 'owner_staff_schedule_delete', methods: ['POST'])]
+    #[Route('/biznes/{businessId}/pracownik/{staffId}/grafik/{scheduleId}/usun', name: 'owner_staff_schedule_delete', methods: ['POST'])]
     public function deleteStaffSchedule(Request $request, int $businessId, int $staffId, int $scheduleId): Response
     {
         $user = $this->getUser();
@@ -390,7 +390,7 @@ class OwnerController extends AbstractController
         ]);
     }
 
-    #[Route('/wlasciciel/biznes/{id}/pracownik/{staffId}/urlopy', name: 'owner_staff_timeoff')]
+    #[Route('/biznes/{id}/pracownik/{staffId}/urlopy', name: 'owner_staff_timeoff')]
     public function staffTimeOff(Request $request, Business $business, int $staffId): Response
     {
         $user = $this->getUser();
@@ -438,7 +438,7 @@ class OwnerController extends AbstractController
         ]);
     }
 
-    #[Route('/wlasciciel/biznes/{businessId}/pracownik/{staffId}/urlopy/{timeoffId}/usun', name: 'owner_staff_timeoff_delete', methods: ['POST'])]
+    #[Route('/biznes/{businessId}/pracownik/{staffId}/urlopy/{timeoffId}/usun', name: 'owner_staff_timeoff_delete', methods: ['POST'])]
     public function deleteStaffTimeOff(Request $request, int $businessId, int $staffId, int $timeoffId): Response
     {
         $user = $this->getUser();
@@ -472,7 +472,7 @@ class OwnerController extends AbstractController
         ]);
     }
 
-    #[Route('/wlasciciel/biznes/{id}/rezerwacje', name: 'owner_bookings')]
+    #[Route('/biznes/{id}/rezerwacje', name: 'owner_bookings')]
     public function businessBookings(Business $business): Response
     {
         $user = $this->getUser();
@@ -489,7 +489,7 @@ class OwnerController extends AbstractController
         ]);
     }
 
-    #[Route('/wlasciciel/rezerwacja/{id}/potwierdz', name: 'owner_booking_confirm', methods: ['POST'])]
+    #[Route('/rezerwacja/{id}/potwierdz', name: 'owner_booking_confirm', methods: ['POST'])]
     public function confirmBooking(Request $request, Booking $booking): Response
     {
         $user = $this->getUser();
@@ -511,7 +511,7 @@ class OwnerController extends AbstractController
         return $this->redirectToRoute('owner_bookings', ['id' => $business->getId()]);
     }
 
-    #[Route('/wlasciciel/rezerwacja/{id}/zakoncz', name: 'owner_booking_complete', methods: ['POST'])]
+    #[Route('/rezerwacja/{id}/zakoncz', name: 'owner_booking_complete', methods: ['POST'])]
     public function completeBooking(Request $request, Booking $booking): Response
     {
         $user = $this->getUser();
@@ -533,7 +533,7 @@ class OwnerController extends AbstractController
         return $this->redirectToRoute('owner_bookings', ['id' => $business->getId()]);
     }
 
-    #[Route('/wlasciciel/rezerwacja/{id}/anuluj', name: 'owner_booking_cancel', methods: ['POST'])]
+    #[Route('/rezerwacja/{id}/anuluj', name: 'owner_booking_cancel', methods: ['POST'])]
     public function cancelOwnerBooking(Request $request, Booking $booking): Response
     {
         $user = $this->getUser();
@@ -555,7 +555,7 @@ class OwnerController extends AbstractController
         return $this->redirectToRoute('owner_bookings', ['id' => $business->getId()]);
     }
 
-    #[Route('/wlasciciel/biznes/{id}/pracownik/{staffId}/uslugi', name: 'owner_staff_services', methods: ['GET', 'POST'])]
+    #[Route('/biznes/{id}/pracownik/{staffId}/uslugi', name: 'owner_staff_services', methods: ['GET', 'POST'])]
     public function staffServices(Request $request, Business $business, int $staffId): Response
     {
         $user = $this->getUser();
@@ -613,7 +613,7 @@ class OwnerController extends AbstractController
         ]);
     }
 
-    #[Route('/wlasciciel/biznes/{id}/uslugi', name: 'owner_services')]
+    #[Route('/biznes/{id}/uslugi', name: 'owner_services')]
     public function listServices(Business $business): Response
     {
         $user = $this->getUser();
@@ -630,7 +630,7 @@ class OwnerController extends AbstractController
         ]);
     }
 
-    #[Route('/wlasciciel/biznes/{id}/uslugi/nowa', name: 'owner_service_create', methods: ['GET', 'POST'])]
+    #[Route('/biznes/{id}/uslugi/nowa', name: 'owner_service_create', methods: ['GET', 'POST'])]
     public function createService(Request $request, Business $business): Response
     {
         $user = $this->getUser();
@@ -663,7 +663,7 @@ class OwnerController extends AbstractController
         ]);
     }
 
-    #[Route('/wlasciciel/biznes/{businessId}/uslugi/{serviceId}/edytuj', name: 'owner_service_edit', methods: ['GET', 'POST'])]
+    #[Route('/biznes/{businessId}/uslugi/{serviceId}/edytuj', name: 'owner_service_edit', methods: ['GET', 'POST'])]
     public function editService(Request $request, int $businessId, int $serviceId): Response
     {
         $user = $this->getUser();
@@ -701,7 +701,7 @@ class OwnerController extends AbstractController
         ]);
     }
 
-    #[Route('/wlasciciel/biznes/{businessId}/uslugi/{serviceId}/usun', name: 'owner_service_delete', methods: ['POST'])]
+    #[Route('/biznes/{businessId}/uslugi/{serviceId}/usun', name: 'owner_service_delete', methods: ['POST'])]
     public function deleteService(Request $request, int $businessId, int $serviceId): Response
     {
         $user = $this->getUser();
@@ -737,7 +737,7 @@ class OwnerController extends AbstractController
         return $this->redirectToRoute('owner_services', ['id' => $business->getId()]);
     }
 
-    #[Route('/wlasciciel/biznes/{id}/kalendarz', name: 'owner_calendar')]
+    #[Route('/biznes/{id}/kalendarz', name: 'owner_calendar')]
     public function calendar(Business $business): Response
     {
         $user = $this->getUser();
@@ -751,7 +751,7 @@ class OwnerController extends AbstractController
         ]);
     }
 
-    #[Route('/wlasciciel/biznes/{id}/kalendarz/dane', name: 'owner_calendar_data', methods: ['GET'])]
+    #[Route('/biznes/{id}/kalendarz/dane', name: 'owner_calendar_data', methods: ['GET'])]
     public function calendarData(Business $business): JsonResponse
     {
         $user = $this->getUser();
