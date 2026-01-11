@@ -41,7 +41,11 @@
 								<span class="font-black text-[var(--c-primary)]">{{ business.rating|number_format(1, '.', '') }}</span>
 								<span class="text-sm">({{ business.reviews_count }} opinii)</span>
 							{% else %}
-								<span class="font-black text-[var(--c-primary)]">-</span>
+								<span class="business-info__stars text-gray-300 font-black tracking-[2px]">
+									{% for i in 1..5 %}<i class="fa-solid fa-star"></i>{% endfor %}
+								</span>
+								<span class="font-black text-[var(--c-primary)]">0.0</span>
+								<span class="text-sm">(0 opinii)</span>
 							{% endif %}
 							</div>
 						</div>
@@ -164,8 +168,13 @@
 										{% for i in 1..5 %}<i class="fa-solid fa-star"></i>{% endfor %}
 									</div>
 								{% else %}
-									<div class="text-3xl font-black text-[var(--c-primary)] leading-none">-</div>
-									<div class="text-sm text-[var(--c-secondary)] font-semibold mt-1">Brak opinii</div>
+									<div>
+										<div class="text-3xl font-black text-[var(--c-primary)] leading-none">0.0</div>
+										<div class="text-sm text-[var(--c-secondary)] font-semibold mt-1">Brak opinii</div>
+									</div>
+									<div class="text-gray-300 font-black tracking-[2px] mt-1 text-lg">
+										{% for i in 1..5 %}<i class="fa-solid fa-star"></i>{% endfor %}
+									</div>
 								{% endif %}
 							</div>
 						</div>
