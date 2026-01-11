@@ -1,0 +1,362 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Booker - {{ title }}
+{% endblock %}
+
+{% block header %}
+    {% include 'partials/header.html.twig' %}
+{% endblock %}
+
+{% block body %}
+
+<main class="service-page">
+
+    <section class="service-page__hero py-4 bg-white">
+        <div class="service-page__container py-16 sm:py-14">
+            <div class="service-page__hero-inner flex flex-col lg:flex-row-reverse items-center gap-8 lg:gap-12">
+                <div class="service-page__hero-left w-full lg:w-1/2">
+                    <div class="service-page__hero-img-wrap">
+                        <img
+                            src="{{ landing.hero.image }}"
+                            alt="{{ landing.hero.imageAlt }}"
+                            class="service-page__hero-img"
+                        >
+                    </div>
+                </div>
+
+                <div class="service-page__hero-right w-full lg:w-1/2 text-center lg:text-left">
+                    <h1 class="service-page__title text-3xl sm:text-5xl font-extrabold tracking-tight text-[color:var(--c-primary)]">
+                        {{ landing.hero.title }}
+                    </h1>
+
+                    <p class="service-page__subtitle mt-7 text-sm sm:text-base text-[color:var(--c-secondary)] leading-relaxed">
+                        {{ landing.hero.subtitle }}
+                    </p>
+
+                    {% if landing.hero.hints is defined and landing.hero.hints is not empty %}
+                        <div class="service-page__hero-hints mt-7 flex flex-wrap gap-2 justify-center lg:justify-start">
+                            {% for hint in landing.hero.hints %}
+                                <span class="service-page__hint"><i class="fa-regular fa-circle-check"></i> {{ hint }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# WYNIKI DLA MIASTA #}
+    <section id="uslugi" class="service-page__cities bg-[color:var(--c-surface)]">
+        <div class="service-page__container py-12 sm:py-16">
+            <div class="service-page__section-head flex flex-col items-center text-center">
+                <h2 class="service-page__h2 text-2xl sm:text-3xl font-extrabold text-[color:var(--c-primary)]">
+                    Znajdź miejsca w Twoim mieście
+                </h2>
+                <p class="mt-3 max-w-2xl text-sm sm:text-base text-slate-600">
+                    Wybierz miasto, a pokażemy polecane biznesy, które oferują tę usługę.
+                </p>
+            </div>
+
+            <div class="mt-8 flex flex-col sm:flex-row items-stretch sm:items-end justify-center gap-3">
+                <form method="get" action="{{ path('app_service_landing', { slug: slug }) }}" class="w-full max-w-2xl">
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <div class="w-full">
+                            <label for="city" class="block text-sm font-semibold text-[color:var(--c-primary)] mb-2">
+                                Wybierz miasto
+                            </label>
+
+                            <div class="flex items-center gap-2 rounded-2xl bg-white px-4 py-3 shadow-sm border border-[rgba(47,53,66,.10)]">
+                                <i class="fa-solid fa-location-dot text-slate-500"></i>
+                                <select
+                                    id="city"
+                                    name="city"
+                                    class="w-full bg-transparent outline-none text-[color:var(--c-primary)]"
+                                >
+                                    <option value="">- wybierz -</option>
+                                    {% for c in cities %}
+                                        <option value="{{ c }}" {{ selectedCity == c ? 'selected' : '' }}>
+                                            {{ c }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="sm:mt-[28px] inline-flex items-center justify-center rounded-2xl px-6 py-3 font-semibold text-white bg-[color:var(--c-cta)] hover:brightness-95 min-w-[160px] transition shadow-sm"
+                        >
+                            Szukaj
+                            <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </button>
+
+                        {% if selectedCity %}
+                            <a
+                                href="{{ path('app_service_landing', { slug: slug }) }}#uslugi"
+                                class="sm:mt-[28px] inline-flex items-center justify-center rounded-2xl px-6 py-3 font-semibold text-[color:var(--c-primary)] bg-white hover:bg-white/90 transition border border-[rgba(47,53,66,.12)]"
+                            >
+                                Wyczyść
+                            </a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+
+            {% if selectedCity is empty %}
+                <div class="mt-10 max-w-3xl mx-auto rounded-2xl bg-white p-6 sm:p-7 border border-[rgba(47,53,66,.10)] text-center">
+                    <div class="text-[color:var(--c-primary)] font-extrabold text-lg">
+                        Wybierz miasto, żeby zobaczyć dostępne miejsca
+                    </div>
+                    <div class="mt-2 text-sm text-slate-600">
+                        Dzięki temu wyniki będą dopasowane do Twojej lokalizacji.
+                    </div>
+                </div>
+            {% else %}
+                <div class="mt-10 flex items-center justify-center">
+                    <div class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 border border-[rgba(47,53,66,.10)] shadow-sm text-sm">
+                        <i class="fa-solid fa-location-dot text-slate-500"></i>
+                        <span class="font-semibold text-[color:var(--c-primary)]">
+                            {{ selectedCity }}
+                        </span>
+                        <span class="text-slate-500">
+                            • {{ businesses|length }} wyników
+                        </span>
+                    </div>
+                </div>
+
+                {% if businesses is empty %}
+                    <div class="mt-8 max-w-3xl mx-auto rounded-2xl bg-white p-6 sm:p-7 border border-[rgba(47,53,66,.10)] text-center">
+                        <div class="text-[color:var(--c-primary)] font-extrabold text-lg">
+                            Brak wyników dla tego miasta
+                        </div>
+                        <div class="mt-2 text-sm text-slate-600">
+                            Spróbuj wybrać inne miasto — albo dodaj biznesy do bazy dla tej kategorii.
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+                        {% for b in businesses %}
+                            <a
+                                href="{{ path('business_index', { id: b.id }) }}"
+                                class="group rounded-2xl bg-white border border-[rgba(47,53,66,.10)] overflow-hidden shadow-sm hover:shadow-md transition"
+                            >
+                                <div class="relative">
+                                    <img
+                                        src="{{ b.image }}"
+                                        alt="{{ b.name }}"
+                                        class="h-[180px] w-full object-cover"
+                                        loading="lazy"
+                                    >
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/45 via-black/5 to-transparent"></div>
+
+                                    <div class="absolute bottom-3 left-3 right-3">
+                                        <div class="text-white font-extrabold text-lg leading-tight">
+                                            {{ b.name }}
+                                        </div>
+                                        <div class="mt-1 text-white/90 text-xs">
+                                            {{ b.address }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-4 sm:p-5">
+                                    {% if b.servicePills is not empty %}
+                                        <div class="flex flex-wrap gap-2">
+                                            {% for pill in b.servicePills %}
+                                                <span class="inline-flex items-center rounded-full bg-[rgba(47,53,66,.06)] px-3 py-1 text-xs font-semibold text-[color:var(--c-primary)]">
+                                                    {{ pill }}
+                                                </span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        <div class="text-sm text-slate-600">
+                                            Brak przypisanych usług do wyświetlenia.
+                                        </div>
+                                    {% endif %}
+
+                                    <div class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[color:var(--c-cta)]">
+                                        Zobacz profil
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </div>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </section>
+
+    <section id="miasta" class="service-page__cities bg-white">
+        <div class="service-page__container py-12 sm:py-16">
+            <div class="service-page__section-head flex flex-col items-center text-center">
+                <h2 class="service-page__h2 text-2xl sm:text-3xl font-extrabold text-[color:var(--c-primary)]">
+                    {{ landing.cities.title }}
+                </h2>
+                <p class="mt-3 max-w-2xl text-sm sm:text-base text-slate-600">
+                    {{ landing.cities.subtitle }}
+                </p>
+            </div>
+
+            <div class="service-page__city-list mt-8 flex flex-wrap -mx-2">
+                {% for item in landing.cityLinks %}
+                    <div class="service-page__city-item px-2 mb-3 w-1/2 sm:w-1/3 lg:w-1/4">
+                        <a href="{{ item.href }}" class="service-page__city-link bg-[#eee] hover:bg-[#efefef]">
+                            <span class="service-page__city-label">{{ item.label }}</span>
+                            <span class="service-page__city-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="parallax-cta">
+        <div class="parallax-cta__bg {{ landing.parallax.bgClass }}"></div>
+        <div class="parallax-cta__overlay"></div>
+
+        <div class="parallax-cta__container">
+            <div class="parallax-cta__panel">
+                <span class="parallax-cta__badge">{{ landing.badge }}</span>
+
+                <h2 class="parallax-cta__title">
+                    {{ landing.parallax.titleHtml|raw }}
+                </h2>
+
+                <p class="parallax-cta__text">
+                    {{ landing.parallax.text }}
+                </p>
+
+                <div class="parallax-cta__actions">
+                    <a href="{{ landing.parallax.primary.href }}" class="parallax-cta__btn parallax-cta__btn--primary">
+                        {{ landing.parallax.primary.label }}
+                    </a>
+                    <a href="{{ landing.parallax.ghost.href }}" class="parallax-cta__btn parallax-cta__btn--ghost">
+                        {{ landing.parallax.ghost.label }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="service-page__reviews bg-white">
+        <div class="service-page__container py-12 sm:py-16">
+            <div class="service-page__section-head flex flex-col items-center text-center">
+                <h2 class="service-page__h2 text-2xl sm:text-3xl font-extrabold text-[color:var(--c-primary)]">
+                    {{ landing.reviews.title }}
+                </h2>
+                <p class="mt-3 max-w-2xl text-sm sm:text-base text-slate-600">
+                    {{ landing.reviews.subtitle }}
+                </p>
+            </div>
+
+            <div class="service-page__review-row mt-8 flex flex-col lg:flex-row gap-4 lg:gap-6">
+                {% for r in landing.reviews.items %}
+                    <article class="review-card">
+                        <div class="review-card__stars">
+                            {% for i in 1..r.stars %}
+                                <i class="fa-solid fa-star"></i>
+                            {% endfor %}
+                        </div>
+
+                        <p class="review-card__text">{{ r.text }}</p>
+
+                        <div class="review-card__meta flex items-center justify-between gap-4">
+                            <div class="review-card__person">
+                                <div class="review-card__name">{{ r.person }}</div>
+                                <div class="review-card__place">{{ r.studio }} • {{ r.city }}</div>
+                            </div>
+                            <div class="review-card__badge {{ r.muted ? 'review-card__badge--muted' : '' }}">
+                                {{ r.rating|number_format(1, '.', '') }}
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="service-page__content bg-[color:var(--c-surface)]">
+        <div class="service-page__container py-12 sm:py-16">
+            <div class="service-page__split flex flex-col lg:flex-row items-center gap-10 lg:gap-14">
+                <div class="service-page__split-media w-full lg:w-1/2">
+                    <div class="service-page__img-wrap">
+                        <img
+                            src="{{ landing.content.image }}"
+                            alt="{{ landing.content.imageAlt }}"
+                            class="service-page__img"
+                        >
+                    </div>
+                </div>
+
+                <div class="service-page__split-text w-full lg:w-1/2">
+                    <h2 class="service-page__h2 text-2xl sm:text-3xl font-extrabold text-[color:var(--c-primary)]">
+                        {{ landing.content.title }}
+                    </h2>
+
+                    {% for p in landing.content.paragraphs %}
+                        <p class="mt-4 text-slate-700 leading-relaxed">{{ p }}</p>
+                    {% endfor %}
+
+                    <div class="service-page__cta mt-7 flex flex-col sm:flex-row items-center gap-3">
+                        <a href="{{ landing.content.primary.href }}" class="inline-flex items-center justify-center rounded-xl px-6 py-3 font-semibold text-white bg-[color:var(--c-cta)] hover:brightness-95 transition shadow-sm">
+                            {{ landing.content.primary.label }}
+                        </a>
+                        <a href="{{ landing.content.secondary.href }}" class="inline-flex items-center justify-center rounded-xl px-6 py-3 font-semibold text-[color:var(--c-primary)] bg-white hover:bg-white/90 transition border border-[rgba(47,53,66,.12)]">
+                            {{ landing.content.secondary.label }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="popularne-zabiegi" class="service-page__treatments bg-white">
+        <div class="service-page__container py-12 sm:py-16">
+            <div class="service-page__section-head flex flex-col items-center text-center">
+                <h2 class="service-page__h2 text-2xl sm:text-3xl font-extrabold text-[color:var(--c-primary)]">
+                    {{ landing.treatments.title }}
+                </h2>
+                <p class="mt-3 max-w-2xl text-sm sm:text-base text-slate-600">
+                    {{ landing.treatments.subtitle }}
+                </p>
+            </div>
+
+            <div class="service-page__pills mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+                {% for pill in landing.treatments.pills %}
+                    <a href="{{ pill.href }}" class="service-pill">{{ pill.label }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+</main>
+{% endblock %}
+
+{% block custom_scripts %}
+<script defer>
+(() => {
+    const run = () => {
+        const params = new URLSearchParams(window.location.search);
+        const city = params.get('city');
+
+        if (!city) return;
+
+        const target = document.querySelector('#uslugi');
+        if (!target) return;
+
+        target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', run, { once: true });
+    } else {
+        run();
+    }
+})();
+</script>
+{% endblock %}
