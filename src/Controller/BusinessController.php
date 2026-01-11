@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Constants\BusinessFeaturesConstants;
 use App\Entity\Business;
 use App\Repository\BusinessRepository;
 use App\Repository\ServiceRepository;
@@ -130,21 +131,21 @@ final class BusinessController extends AbstractController
         }
 
 
-        $safetyRules = [
-            ['label' => 'Wentylacja pomieszczeń', 'icon' => 'fa-regular fa-star'],
-            ['label' => 'Regularna dezynfekcja stanowiska', 'icon' => 'fa-regular fa-star'],
-            ['label' => 'Sterylizacja narzędzi', 'icon' => 'fa-regular fa-star'],
-            ['label' => 'Możliwość płatności bezgotówkowej', 'icon' => 'fa-regular fa-star'],
-        ];
+        $safetyRules = [];
+        foreach ($businessEntity->getSafetyRules() as $ruleKey) {
+            $safetyRules[] = [
+                'label' => BusinessFeaturesConstants::getSafetyRuleLabel($ruleKey) ?? $ruleKey,
+                'icon' => BusinessFeaturesConstants::getSafetyRuleIcon($ruleKey),
+            ];
+        }
 
-        $amenities = [
-            ['label' => 'Parking', 'icon' => 'fa-solid fa-square-parking'],
-            ['label' => 'Internet (Wi-Fi)', 'icon' => 'fa-solid fa-wifi'],
-            ['label' => 'Akceptacja kart płatniczych', 'icon' => 'fa-solid fa-credit-card'],
-            ['label' => 'Dostępne dla niepełnosprawnych', 'icon' => 'fa-solid fa-wheelchair'],
-            ['label' => 'Zwierzęta dozwolone', 'icon' => 'fa-solid fa-paw'],
-            ['label' => 'Przyjazne dla dzieci', 'icon' => 'fa-solid fa-child-reaching'],
-        ];
+        $amenities = [];
+        foreach ($businessEntity->getAmenities() as $amenityKey) {
+            $amenities[] = [
+                'label' => BusinessFeaturesConstants::getAmenityLabel($amenityKey) ?? $amenityKey,
+                'icon' => BusinessFeaturesConstants::getAmenityIcon($amenityKey),
+            ];
+        }
 
         $todayIndex = (int) date('N') - 1;
 

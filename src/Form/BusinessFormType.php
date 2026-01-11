@@ -2,8 +2,10 @@
 
 namespace App\Form;
 
+use App\Constants\BusinessFeaturesConstants;
 use App\Entity\Business;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -255,7 +257,36 @@ class BusinessFormType extends AbstractType
                 'label_attr' => [
                     'class' => 'block text-sm font-medium text-gray-700 mb-1',
                 ],
+            ])
+            ->add('safetyRules', ChoiceType::class, [
+                'label' => 'Zasady bezpieczeństwa',
+                'choices' => $this->formatChoices(BusinessFeaturesConstants::SAFETY_RULES),
+                'multiple' => true,
+                'expanded' => true,
+                'required' => false,
+                'label_attr' => [
+                    'class' => 'block text-sm font-medium text-gray-700 mb-2',
+                ],
+            ])
+            ->add('amenities', ChoiceType::class, [
+                'label' => 'Udogodnienia',
+                'choices' => $this->formatChoices(BusinessFeaturesConstants::AMENITIES),
+                'multiple' => true,
+                'expanded' => true,
+                'required' => false,
+                'label_attr' => [
+                    'class' => 'block text-sm font-medium text-gray-700 mb-2',
+                ],
             ]);
+    }
+
+    private function formatChoices(array $items): array
+    {
+        $choices = [];
+        foreach ($items as $key => $item) {
+            $choices[$item['label']] = $key;
+        }
+        return $choices;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

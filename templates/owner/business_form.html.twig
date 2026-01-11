@@ -115,10 +115,50 @@
                                             <span class="text-gray-500">—</span>
                                             <label class="text-sm text-gray-600">Zamknięte:</label>
                                             {{ form_widget(hours.closesAt) }}
+                                            {{ form_widget(hours.weekday, {'attr': {'style': 'display:none'}}) }}
                                         </div>
-                                        <div style="display: none;">{{ form_widget(hours.weekday) }}</div>
                                     </div>
                                     {{ form_errors(hours) }}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {# Safety Rules Section #}
+                        {% if form.safetyRules is defined %}
+                        <div class="mt-6 border-t pt-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ form_label(form.safetyRules) }}</h3>
+                            <p class="text-sm text-gray-600 mb-4">
+                                Wybierz zasady bezpieczeństwa obowiązujące w Twoim biznesie.
+                            </p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                {% for child in form.safetyRules %}
+                                    <div class="flex items-center">
+                                        <label class="flex items-center cursor-pointer">
+                                            {{ form_widget(child, {'attr': {'class': 'mr-2 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500'}}) }}
+                                            <span class="text-sm text-gray-700">{{ child.vars.label }}</span>
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {# Amenities Section #}
+                        {% if form.amenities is defined %}
+                        <div class="mt-6 border-t pt-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ form_label(form.amenities) }}</h3>
+                            <p class="text-sm text-gray-600 mb-4">
+                                Wybierz udogodnienia dostępne w Twoim biznesie.
+                            </p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                {% for child in form.amenities %}
+                                    <div class="flex items-center">
+                                        <label class="flex items-center cursor-pointer">
+                                            {{ form_widget(child, {'attr': {'class': 'mr-2 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500'}}) }}
+                                            <span class="text-sm text-gray-700">{{ child.vars.label }}</span>
+                                        </label>
+                                    </div>
                                 {% endfor %}
                             </div>
                         </div>

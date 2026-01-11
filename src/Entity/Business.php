@@ -69,6 +69,12 @@ class Business
     )]
     private ?array $photoUrls = null;
 
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $safetyRules = null;
+
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $amenities = null;
+
     #[ORM\OneToMany(mappedBy: 'business', targetEntity: Service::class)]
     private Collection $services;
 
@@ -436,6 +442,30 @@ class Business
     public function setPhotoUrls(?array $photoUrls): static
     {
         $this->photoUrls = $photoUrls;
+
+        return $this;
+    }
+
+    public function getSafetyRules(): array
+    {
+        return $this->safetyRules ?? [];
+    }
+
+    public function setSafetyRules(?array $safetyRules): static
+    {
+        $this->safetyRules = $safetyRules;
+
+        return $this;
+    }
+
+    public function getAmenities(): array
+    {
+        return $this->amenities ?? [];
+    }
+
+    public function setAmenities(?array $amenities): static
+    {
+        $this->amenities = $amenities;
 
         return $this;
     }
