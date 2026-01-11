@@ -3,7 +3,7 @@
 {% block title %}Wybierz pracownika - {{ service.name }}{% endblock %}
 
 {% block body %}
-<div class="max-w-7xl mx-auto px-4 mt-8">
+<div class="max-w-7xl mx-auto mt-8 pt-6 min-h-[70vh] pb-20">
     <div class="w-full">
         <nav class="mb-6" aria-label="breadcrumb">
             <ol class="flex space-x-2 text-sm text-gray-600">
@@ -15,7 +15,7 @@
 
         <div class="mb-6">
             <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ business.businessName }}</h1>
-            <div class="bg-white rounded-lg shadow mb-6">
+            <div class="bg-white border rounded-lg shadow mb-6">
                 <div class="p-6">
                     <h3 class="text-2xl font-semibold text-gray-900 mb-2">{{ service.name }}</h3>
                     <p class="text-gray-600 mb-4">{{ service.description }}</p>
@@ -40,7 +40,7 @@
         {% else %}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% for staff in staffMembers %}
-                    <div class="bg-white rounded-lg shadow flex flex-col h-full">
+                    <div class="bg-white rounded-lg shadow flex border flex-col h-full">
                         <div class="p-6 flex-grow">
                             {% if staff.avatarImage %}
                                 <img src="{{ staff.avatarImage }}" class="rounded-full mx-auto block mb-4" alt="{{ staff.name }}" style="width: 100px; height: 100px; object-fit: cover;">
