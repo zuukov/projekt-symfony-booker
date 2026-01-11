@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Business;
+use App\Repository\BusinessRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -11,6 +12,10 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 
 final class HomeController extends AbstractController
 {
+    public function __construct(
+        private BusinessRepository $businessRepository,
+    ) {}
+
     #[Route('/', name: 'app_home')]
     public function index(): Response
     {
@@ -109,10 +114,20 @@ final class HomeController extends AbstractController
             ],
         ];
 
+        $firstBusiness = null;
+        $user = $this->getUser();
+        if ($user && in_array('ROLE_BUSINESS_OWNER', $user->getRoles())) {
+            $businesses = $this->businessRepository->findBy(['owner' => $user], ['id' => 'ASC'], 1);
+            if (!empty($businesses)) {
+                $firstBusiness = $businesses[0];
+            }
+        }
+
         return $this->render('home/index.html.twig', [
             'featured' => $featured,
             'cities' => $cities,
             'blog' => $blog,
+            'firstBusiness' => $firstBusiness,
         ]);
     }
 
