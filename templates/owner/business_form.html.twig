@@ -107,7 +107,7 @@
                                     {% set weekdayIndex = hours.vars.value.weekday ?? loop.index0 %}
                                     <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-md">
                                         <div class="w-32 font-medium text-gray-700">
-                                            {{ dayNames[weekdayIndex] ?? 'Dzień ' ~ (weekdayIndex + 1) }}
+                                            {{ dayNames[weekdayIndex] }}
                                         </div>
                                         <div class="flex items-center gap-2 flex-1">
                                             <label class="text-sm text-gray-600">Otwarte:</label>
