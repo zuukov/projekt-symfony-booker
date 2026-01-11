@@ -63,6 +63,7 @@ final class BusinessController extends AbstractController
             'reviews_count' => count($businessEntity->getReviews()), // Real count
             'featured_image' => $businessEntity->getLogoUrl() ?? 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=1800&q=80',
             'email' => $businessEntity->getEmail(),
+            'phone' => $businessEntity->getPhone(),
         ];
 
         // Get real services from database

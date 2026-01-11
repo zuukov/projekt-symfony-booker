@@ -201,9 +201,14 @@
 									<div class="font-black text-[var(--c-primary)] leading-tight truncate">{{ business.name }}</div>
 									<div class="text-xs text-[var(--c-secondary)] font-semibold truncate">{{ business.address_line }}, {{ business.city }}</div>
 								</div>
-							<a href="mailto:{{ business.email }}" class="business-aside-map__contact w-10 h-10 rounded-full bg-[var(--c-cta)] hover:bg-[var(--c-cta-hover)] transition inline-flex items-center justify-center text-white">
+							<div class="flex gap-2">
+								<button type="button" onclick="copyPhoneToClipboard('{{ business.phone }}', event)" class="business-aside-map__contact w-10 h-10 rounded-full bg-[var(--c-cta)] hover:bg-[var(--c-cta-hover)] transition inline-flex items-center justify-center text-white" title="Kopiuj numer telefonu">
+									<i class="fa-solid fa-phone"></i>
+								</button>
+								<a href="mailto:{{ business.email }}" class="business-aside-map__contact w-10 h-10 rounded-full bg-[var(--c-cta)] hover:bg-[var(--c-cta-hover)] transition inline-flex items-center justify-center text-white" title="Wyślij email">
 									<i class="fa-solid fa-envelope"></i>
 								</a>
+							</div>
 							</div>
 						</div>
 					</div>
@@ -290,6 +295,51 @@
 
 <script defer>
 (() => {
+	// Copy phone number to clipboard
+	window.copyPhoneToClipboard = function(phone, event) {
+		const btn = event ? event.currentTarget : null;
+		
+		navigator.clipboard.writeText(phone).then(() => {
+			// Show temporary notification on button
+			if (btn) {
+				const originalHTML = btn.innerHTML;
+				btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+				btn.style.backgroundColor = '#10b981';
+				
+				setTimeout(() => {
+					btn.innerHTML = originalHTML;
+					btn.style.backgroundColor = '';
+				}, 2000);
+			}
+			alert('Numer telefonu skopiowany!');
+		}).catch(err => {
+			console.error('Failed to copy phone number:', err);
+			// Fallback method for older browsers
+			const textArea = document.createElement('textarea');
+			textArea.value = phone;
+			textArea.style.position = 'fixed';
+			textArea.style.left = '-999999px';
+			document.body.appendChild(textArea);
+			textArea.select();
+			try {
+				document.execCommand('copy');
+				if (btn) {
+					const originalHTML = btn.innerHTML;
+					btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+					btn.style.backgroundColor = '#10b981';
+					setTimeout(() => {
+						btn.innerHTML = originalHTML;
+						btn.style.backgroundColor = '';
+					}, 2000);
+				}
+				alert('Numer telefonu skopiowany!');
+			} catch (err2) {
+				alert('Nie udało się skopiować numeru telefonu');
+			}
+			document.body.removeChild(textArea);
+		});
+	};
+
 	function initStaffSwiperAside() {
 		const el = document.querySelector('.business-staff-swiper');
 		if (!el || typeof Swiper === 'undefined') return;
